@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yourapp="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_lock"
+        android:title="@string/lock"
+        yourapp:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/action_key"
+        android:title="@string/key"
+        yourapp:showAsAction="never" />
+    <item
+        android:id="@+id/action_calendar"
+        android:title="@string/calendar"
+        yourapp:showAsAction="never" />
+</menu>

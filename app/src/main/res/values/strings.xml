@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">EspressoDemo</string>
+
+    <string name="activity">activity</string>
+    <string name="fragment">fragment</string>
+    <string name="name">Name: </string>
+    <string name="name_hint">Input your name</string>
+    <string name="ok">Ok</string>
+    <string name="show_actionbar">Show actionbar</string>
+    <string name="hide_actionbar">Hide actionbar</string>
+    <string name="lock">Lock</string>
+    <string name="key">Key</string>
+    <string name="calendar">Calendar</string>
+</resources>
