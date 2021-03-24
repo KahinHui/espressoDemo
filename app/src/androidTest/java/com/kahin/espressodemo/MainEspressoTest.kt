@@ -10,14 +10,14 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
+import androidx.test.filters.SmallTest
 import org.hamcrest.CoreMatchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-@LargeTest
+@SmallTest
 class MainEspressoTest {
 
     @get:Rule
@@ -36,22 +36,22 @@ class MainEspressoTest {
 
     @Test
     fun jumpMainActivity() {
-        // test the button which id is btn_activity.
+        // Test the button which id is btn_activity.
         onView(withId(R.id.btn_activity)).apply {
-            // check whether the button is displayed or not.
+            // Check whether the button is displayed or not.
             check(matches(isDisplayed()))
-            // click the button.
+            // Click the button.
             perform(click())
         }
     }
 
     @Test
     fun jumpMainFragment() {
-        // test the button which id is btn_fragment and content text is fragment.
+        // Test the button which id is btn_fragment and content text is fragment.
         onView(allOf(withId(R.id.btn_fragment), withText(R.string.fragment)))
-                // check whether the button is displayed or not.
+                // Check whether the button is displayed or not.
                 .check(matches(isDisplayed()))
-                // click the button.
+                // Click the button.
                 .perform(click())
     }
 
@@ -61,17 +61,17 @@ class MainEspressoTest {
         jumpMainActivity()
 
         onView(withId(R.id.btn_activity))
-                // check whether the button isn't exist or not.
+                // Check whether the button isn't exist or not.
                 .check(doesNotExist())
 
         onView(withId(R.id.et_name))
                 .check(matches(withHint(R.string.name_hint)))
-                // type 'Tim' and close soft keyboard.
+                // Type 'Tim' and close soft keyboard.
                 .perform(typeText(STRING_TO_BE_TYPED), closeSoftKeyboard())
         onView(withId(R.id.btn_ok))
                 .perform(click())
         onView(withId(R.id.tv_name))
-                // check whether content text is 'Name: Time' or not.
+                // Check whether content text is 'Name: Time' or not.
                 .check(matches(withText("Name: $STRING_TO_BE_TYPED")))
     }
 

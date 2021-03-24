@@ -11,7 +11,7 @@ class MainViewModel : ViewModel() {
     fun getListData() {
         val list = arrayListOf<MainModel.Item>()
         for (i in 0 until 50) {
-            list.add(i, MainModel.Item("item $i", "${i}00"))
+            list.add(i, MainModel.Item("item $i", "100"))
         }
         listData.postValue(list)
     }
