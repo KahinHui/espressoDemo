@@ -11,5 +11,6 @@
     <string name="lock">Lock</string>
     <string name="key">Key</string>
     <string name="calendar">Calendar</string>
-    <string name="result">Result: %1$s</string>
+    <string name="rv_result">RecyclerView Result: %1$s</string>
+    <string name="lv_result">ListView Result: %1$s</string>
 </resources>

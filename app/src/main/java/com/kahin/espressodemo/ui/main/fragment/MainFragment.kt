@@ -4,30 +4,41 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
+import android.widget.AdapterView
+import android.widget.ListView
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
-import com.kahin.espressodemo.BR
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.databinding.MainFragmentBinding
+
 
 class MainFragment : Fragment() {
 
     companion object {
         fun newInstance() = MainFragment()
+
+        @VisibleForTesting
+        val ROW_TITLE = "ROW_TITLE"
+
+        @VisibleForTesting
+        val ROW_CONTENT = "ROW_CONTENT"
     }
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: MainFragmentBinding
 
     private val dataAdapter by lazy {
-        MyListAdapter(onItemClickListener = {viewId, _, _, data ->
-            when(viewId) {
-                R.id.tv_title -> { binding.tvResult.text = String.format(context!!.getString(R.string.result), data.count)}
-                R.id.tv_content -> { binding.tvResult.text = String.format(context!!.getString(R.string.result), data.title)}
-                else -> {}
+        MyRecyclerViewAdapter(onItemClickListener = { viewId, _, _, data ->
+            when (viewId) {
+                R.id.tv_title -> {
+                    binding.tvRvResult.text = String.format(context!!.getString(R.string.rv_result), data.count)
+                }
+                R.id.tv_content -> {
+                    binding.tvRvResult.text = String.format(context!!.getString(R.string.rv_result), data.title)
+                }
+                else -> {
+                }
             }
         })
     }
@@ -50,79 +61,36 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding.apply {
-            tvResult.text = String.format(context!!.getString(R.string.result), "")
+            tvRvResult.text = String.format(context!!.getString(R.string.rv_result), "")
             rv.adapter = dataAdapter
         }
 
-        viewModel.listData.observe(viewLifecycleOwner, {
-            dataAdapter.loadData(it)
-        })
+        viewModel.apply {
+            listData.observe(viewLifecycleOwner, {
+                dataAdapter.loadData(it)
+            })
+            listViewData.observe(viewLifecycleOwner, {
+                loadListViewData(binding.lv, it)
+            })
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.getListData()
-    }
-}
-
-open class MyListAdapter(
-        private val onItemClickListener: (
-                viewId: Int,
-                viewBinding: ViewDataBinding,
-                position: Int,
-                data: MainModel.Item
-        ) -> Unit,
-    private var data: MutableList<MainModel.Item> = ArrayList()
-) : RecyclerView.Adapter<MyListAdapter.ViewHolder>() {
-
-    inner class ViewHolder(val itemBinding: ViewDataBinding) : RecyclerView.ViewHolder(itemBinding.root) {
-
-        var isInTheEnd = false
-
-        fun setIsInTheEnd(isInTheEnd: Boolean) {
-            this.isInTheEnd = isInTheEnd
-        }
-
-        fun getIsInTheEnd(): Boolean {
-            return isInTheEnd
+        viewModel.apply {
+            getRecyclerViewData()
+            getListViewData()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding: ViewDataBinding = DataBindingUtil.bind(layoutInflater.inflate(R.layout.item_main, parent, false))!!
-        return ViewHolder(binding)
-    }
+    private fun loadListViewData(lv: ListView, data: MutableList<MutableMap<String, String>>) {
+        val from = arrayOf(ROW_TITLE, ROW_CONTENT)
+        val to = intArrayOf(R.id.tv_title, R.id.tv_content)
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemBinding.apply {
-            if (position == data.size - 1) {
-                holder.setIsInTheEnd(true)
-            } else {
-                holder.setIsInTheEnd(false)
-            }
-            setVariable(BR.item, data[position])
-            setVariable(BR.clickListener, createOnClickListener(this, position, data[position]))
-            executePendingBindings()
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
-
-    fun loadData(itemList: MutableList<MainModel.Item>) {
-        this.data = itemList
-        notifyDataSetChanged()
-    }
-
-    private fun createOnClickListener(
-            viewBinding: ViewDataBinding,
-            position: Int,
-            itemData: MainModel.Item
-    ): View.OnClickListener {
-        return View.OnClickListener {
-            onItemClickListener(it.id, viewBinding, position, itemData)
+        val adapter = MyListViewAdapter(requireContext(), data, R.layout.item_main, from, to)
+        lv.adapter = adapter
+        lv.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
+            binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), i)
         }
     }
 }

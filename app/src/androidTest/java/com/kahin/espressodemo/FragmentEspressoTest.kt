@@ -1,6 +1,7 @@
 package com.kahin.espressodemo
 
 import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -8,10 +9,13 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
-import com.kahin.espressodemo.ui.main.fragment.MyListAdapter
+import com.kahin.espressodemo.ui.main.fragment.MainFragment.Companion.ROW_TITLE
+import com.kahin.espressodemo.ui.main.fragment.MyRecyclerViewAdapter
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.Description
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.*
 import org.hamcrest.TypeSafeMatcher
 import org.junit.Rule
 import org.junit.Test
@@ -28,8 +32,8 @@ class FragmentEspressoTest {
                 .check(matches(isDisplayed()))
                 .perform(click())
 
-        onView(withId(R.id.tv_result))
-                .check(matches(withText(getResultText(ITEM_ONE_TITLE))))
+        onView(withId(R.id.tv_rv_result))
+                .check(matches(withText(getRvResultText(ITEM_ONE_TITLE))))
     }
 
     @Test
@@ -66,7 +70,7 @@ class FragmentEspressoTest {
         onView(withId(R.id.rv))
             .perform(
                 // Scrolls to a specific position.
-                RecyclerViewActions.scrollToPosition<MyListAdapter.ViewHolder>(
+                RecyclerViewActions.scrollToPosition<MyRecyclerViewAdapter.ViewHolder>(
                     POSITION_MIDDLE
                 )
             )
@@ -86,8 +90,8 @@ class FragmentEspressoTest {
                 )
             )
 
-        onView(withId(R.id.tv_result))
-            .check(matches(withText(getResultText(ITEM_FORTY_NINE_TITLE))))
+        onView(withId(R.id.tv_rv_result))
+            .check(matches(withText(getRvResultText(ITEM_FORTY_NINE_TITLE))))
     }
 
     @Test
@@ -95,62 +99,91 @@ class FragmentEspressoTest {
         onView(withId(R.id.rv))
             .perform(
                 // Performs a View Action on a matched View.
-                RecyclerViewActions.actionOnItem<MyListAdapter.ViewHolder>(
+                RecyclerViewActions.actionOnItem<MyRecyclerViewAdapter.ViewHolder>(
                     hasDescendant(withText(ITEM_TWENTY_TITLE)),
                     click()
                 )
             )
 
-        onView(withId(R.id.tv_result))
-            .check(matches(withText(getResultText(ITEM_TWENTY_TITLE))))
+        onView(withId(R.id.tv_rv_result))
+            .check(matches(withText(getRvResultText(ITEM_TWENTY_TITLE))))
     }
 
     @Test
-    fun clickRecycleViewItem2_mainFragment() {
+    fun clickRecycleViewItem0_mainFragment() {
         onView(withId(R.id.rv))
                 .perform(
                         // Performs a ViewAction on a view at a specific position.
-                        RecyclerViewActions.actionOnItemAtPosition<MyListAdapter.ViewHolder>(
+                        RecyclerViewActions.actionOnItemAtPosition<MyRecyclerViewAdapter.ViewHolder>(
                             POSITION_START,
                                 click()
                         )
                 )
 
-        onView(withId(R.id.tv_result))
-                .check(matches(withText(getResultText(ITEM_ZERO_TITLE))))
+        onView(withId(R.id.tv_rv_result))
+                .check(matches(withText(getRvResultText(ITEM_ZERO_TITLE))))
     }
 
-    private fun getResultText(result: String): String {
-        return RESULT + result
+    private fun getRvResultText(result: String): String {
+        return RECYCLER_VIEW_RESULT + result
     }
 
     /**
      * Matches the MyListAdapter.ViewHolder in the end of the list.
      */
-    private fun isInTheEnd(): Matcher<MyListAdapter.ViewHolder> {
-        return object : TypeSafeMatcher<MyListAdapter.ViewHolder>() {
-            override fun matchesSafely(customHolder: MyListAdapter.ViewHolder): Boolean {
+    private fun isInTheEnd(): Matcher<MyRecyclerViewAdapter.ViewHolder> {
+        return object : TypeSafeMatcher<MyRecyclerViewAdapter.ViewHolder>() {
+            override fun matchesSafely(customHolder: MyRecyclerViewAdapter.ViewHolder): Boolean {
                 return customHolder.getIsInTheEnd()
             }
 
             override fun describeTo(description: Description) {
-                description.appendText(getResultText(ITEM_FORTY_NINE_TITLE))
+                description.appendText(getRvResultText(ITEM_FORTY_NINE_TITLE))
             }
         }
     }
 
+    @Test
+    fun clickListViewItem9_mainFragment() {
+        // A click on the row with "item: 9".
+        // Espresso scrolls through the list automatically as needed.
+        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
+                .perform(click())
+
+        onView(withId(R.id.tv_lv_result))
+                .check(matches(withText(getLvResultText(POSITION_9_STR))))
+    }
+
+    @Test
+    fun clickListViewItem1_mainFragment() {
+        // A click on the row with "item: 9".
+        // Espresso scrolls through the list automatically as needed.
+        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
+//                .onChildView()
+                .perform(click())
+
+        onView(withId(R.id.tv_lv_result))
+                .check(matches(withText(getLvResultText(POSITION_9_STR))))
+    }
+
+    private fun getLvResultText(result: String): String {
+        return LIST_VIEW_RESULT + result
+    }
 
     companion object {
-        const val RESULT = "Result: "
+        const val RECYCLER_VIEW_RESULT = "RecyclerView Result: "
+        const val LIST_VIEW_RESULT = "ListView Result: "
         const val COUNT = "100"
 
         const val ITEM_ZERO_TITLE = "item 0"
         const val ITEM_ONE_TITLE = "item 1"
+        const val ITEM_NINE_TITLE = "item 9"
         const val ITEM_TWENTY_TITLE = "item 20"
         const val ITEM_TWENTY_FIVE_TITLE = "item 25"
         const val ITEM_FORTY_NINE_TITLE = "item 49"
 
         const val POSITION_START = 0
+        const val POSITION_9_STR = "9"
         const val POSITION_MIDDLE = 25
     }
 }
