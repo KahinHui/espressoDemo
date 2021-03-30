@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.SimpleAdapter
 
 class MyListViewAdapter(
-        context: Context?,
+        context: Context,
         data: MutableList<out MutableMap<String, *>>?,
         resource: Int,
         from: Array<out String>?,

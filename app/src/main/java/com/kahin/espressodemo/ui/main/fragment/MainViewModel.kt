@@ -21,7 +21,7 @@ class MainViewModel : ViewModel() {
     fun getListViewData() {
         val list = arrayListOf<MutableMap<String, String>>()
         for (i in 0 until 10) {
-            list.add(i, mutableMapOf(Pair(ROW_TITLE, "item $i"), Pair(ROW_CONTENT, "${i}00")))
+            list.add(i, mutableMapOf(Pair(ROW_TITLE, "item $i"), Pair(ROW_CONTENT, "${i}000")))
         }
         listViewData.postValue(list)
     }

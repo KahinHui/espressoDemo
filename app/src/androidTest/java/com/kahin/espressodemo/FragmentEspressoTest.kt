@@ -57,11 +57,11 @@ class FragmentEspressoTest {
                 .perform(
                         // Scrolls to the matched View Holder, if it exists.
                         RecyclerViewActions.scrollToHolder(
-                            isInTheEnd()
+                                isInTheEnd()
                         )
                 )
 
-        onView(withText(ITEM_FORTY_NINE_TITLE))
+        onView(withText(ITEM_TWENTY_NINE_TITLE))
             .check(matches(isDisplayed()))
     }
 
@@ -69,10 +69,10 @@ class FragmentEspressoTest {
     fun scrollToPosition_checkIsDisplayed() {
         onView(withId(R.id.rv))
             .perform(
-                // Scrolls to a specific position.
-                RecyclerViewActions.scrollToPosition<MyRecyclerViewAdapter.ViewHolder>(
-                    POSITION_MIDDLE
-                )
+                    // Scrolls to a specific position.
+                    RecyclerViewActions.scrollToPosition<MyRecyclerViewAdapter.ViewHolder>(
+                            POSITION_MIDDLE
+                    )
             )
 
         onView(withText(ITEM_TWENTY_FIVE_TITLE))
@@ -83,26 +83,26 @@ class FragmentEspressoTest {
     fun actionOnHolderItem_click_checkResultText() {
         onView(withId(R.id.rv))
             .perform(
-                // Performs a View Action on a matched View Holder.
-                RecyclerViewActions.actionOnHolderItem(
-                    isInTheEnd(),
-                    click()
-                )
+                    // Performs a View Action on a matched View Holder.
+                    RecyclerViewActions.actionOnHolderItem(
+                            isInTheEnd(),
+                            click()
+                    )
             )
 
         onView(withId(R.id.tv_rv_result))
-            .check(matches(withText(getRvResultText(ITEM_FORTY_NINE_TITLE))))
+            .check(matches(withText(getRvResultText(ITEM_TWENTY_NINE_TITLE))))
     }
 
     @Test
     fun actionOnItem_click_checkResultText() {
         onView(withId(R.id.rv))
             .perform(
-                // Performs a View Action on a matched View.
-                RecyclerViewActions.actionOnItem<MyRecyclerViewAdapter.ViewHolder>(
-                    hasDescendant(withText(ITEM_TWENTY_TITLE)),
-                    click()
-                )
+                    // Performs a View Action on a matched View.
+                    RecyclerViewActions.actionOnItem<MyRecyclerViewAdapter.ViewHolder>(
+                            hasDescendant(withText(ITEM_TWENTY_TITLE)),
+                            click()
+                    )
             )
 
         onView(withId(R.id.tv_rv_result))
@@ -115,7 +115,7 @@ class FragmentEspressoTest {
                 .perform(
                         // Performs a ViewAction on a view at a specific position.
                         RecyclerViewActions.actionOnItemAtPosition<MyRecyclerViewAdapter.ViewHolder>(
-                            POSITION_START,
+                                POSITION_START,
                                 click()
                         )
                 )
@@ -138,7 +138,7 @@ class FragmentEspressoTest {
             }
 
             override fun describeTo(description: Description) {
-                description.appendText(getRvResultText(ITEM_FORTY_NINE_TITLE))
+                description.appendText(getRvResultText(ITEM_TWENTY_NINE_TITLE))
             }
         }
     }
@@ -148,6 +148,10 @@ class FragmentEspressoTest {
         // A click on the row with "item: 9".
         // Espresso scrolls through the list automatically as needed.
         onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
+                .onChildView(withId(R.id.tv_title))
+                .perform(click())
+        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
+                .onChildView(withId(R.id.tv_title))
                 .perform(click())
 
         onView(withId(R.id.tv_lv_result))
@@ -159,11 +163,14 @@ class FragmentEspressoTest {
         // A click on the row with "item: 9".
         // Espresso scrolls through the list automatically as needed.
         onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
-//                .onChildView()
+                .onChildView(withId(R.id.tv_content))
+                .perform(click())
+        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
+                .onChildView(withId(R.id.tv_content))
                 .perform(click())
 
         onView(withId(R.id.tv_lv_result))
-                .check(matches(withText(getLvResultText(POSITION_9_STR))))
+                .check(matches(withText(getLvResultText(ITEM_NINE_TITLE))))
     }
 
     private fun getLvResultText(result: String): String {
@@ -180,7 +187,7 @@ class FragmentEspressoTest {
         const val ITEM_NINE_TITLE = "item 9"
         const val ITEM_TWENTY_TITLE = "item 20"
         const val ITEM_TWENTY_FIVE_TITLE = "item 25"
-        const val ITEM_FORTY_NINE_TITLE = "item 49"
+        const val ITEM_TWENTY_NINE_TITLE = "item 29"
 
         const val POSITION_START = 0
         const val POSITION_9_STR = "9"

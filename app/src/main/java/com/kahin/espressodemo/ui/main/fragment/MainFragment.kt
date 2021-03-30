@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
+import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.databinding.MainFragmentBinding
-
 
 class MainFragment : Fragment() {
 
@@ -89,8 +89,16 @@ class MainFragment : Fragment() {
 
         val adapter = MyListViewAdapter(requireContext(), data, R.layout.item_main, from, to)
         lv.adapter = adapter
-        lv.onItemClickListener = AdapterView.OnItemClickListener { _, _, i, _ ->
-            binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), i)
+        lv.onItemClickListener = AdapterView.OnItemClickListener { _, view, i, _ ->
+            val tvTitle = view.findViewById<TextView>(R.id.tv_title)
+            val tvContent = view.findViewById<TextView>(R.id.tv_content)
+
+            tvTitle.setOnClickListener {
+                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), i)
+            }
+            tvContent.setOnClickListener {
+                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), "item $i")
+            }
         }
     }
 }
