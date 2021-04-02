@@ -19,7 +19,6 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.kahin.espressodemo.ui.main.activity.CallActivity
 import com.kahin.espressodemo.ui.main.activity.MainActivity
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.not
@@ -96,12 +95,12 @@ class MainEspressoTest {
         onView(withId(R.id.btn_call))
                 .perform(click())
 
-        // Verify that an intent to the dialer was sent with the correct action, phone number
+        // Verify that an intent to the main was sent with the correct action, phone number
         // and package. Think of Intents intended API as the equivalent to Mockito's verify.
         intended(
                 allOf(
                         hasAction(Intent.ACTION_DIAL),
-                        hasData(INTENT_DATA__PHONE),
+                        hasData(INTENT_DATA_PHONE),
                         toPackage(PACKAGE_DIALER)
                 )
         )
@@ -118,26 +117,34 @@ class MainEspressoTest {
         // matches an outgoing intent that call a phone
         val receivedIntent = Iterables.getOnlyElement(Intents.getIntents())
         assertThat(receivedIntent, hasAction(Intent.ACTION_DIAL))
-        assertThat(receivedIntent, hasData(INTENT_DATA__PHONE))
+        assertThat(receivedIntent, hasData(INTENT_DATA_PHONE))
     }
 
     @Test
     fun pickPhone_activityResult_DisplayPhone() {
-        // Build the result to return when the activity is launched.
-//        val resultData = Intent()
-//        resultData.putExtra(MainActivity.NAME_PHONE, STRING_PHONE)
-        val result = ActivityResult(RESULT_OK, CallActivity.createResultData(STRING_PHONE))
+        onView(withId(R.id.btn_pick_phone))
+                .perform(click())
 
-        intending(hasComponent(hasShortClassName(".CallActivity")))
+        onView(withId(R.id.btn_got))
+                .perform(click())
+
+        onView(withId(R.id.et_phone)).check(matches(withText(STRING_PICK_PHONE)))
+    }
+
+    @Test
+    fun pickPhone_intending_activityResult_DisplayPhone() {
+        // Stub all Intents to CallActivity to return STRING_PHONE.
+        // Note that the Activity is never launched and result is stubbed.
+        val resultData = Intent()
+        resultData.putExtra(MainActivity.NAME_PHONE, STRING_PHONE)
+        val result = ActivityResult(RESULT_OK, resultData)
+
+        intending(hasComponent(hasShortClassName(".ui.main.activity.CallActivity")))
                 .respondWith(result)
 
         onView(withId(R.id.btn_pick_phone))
                 .perform(click())
 
-//        onView(withId(R.id.btn_got))
-//                .perform(click())
-
-        // Assert that the data we set up above is shown.
         onView(withId(R.id.et_phone)).check(matches(withText(STRING_PHONE)))
     }
 
@@ -147,6 +154,6 @@ class MainEspressoTest {
         const val STRING_PHONE = "138-8888-8888"
         const val STRING_PICK_PHONE = "987-654-321"
 
-        val INTENT_DATA__PHONE: Uri = Uri.parse("tel:$STRING_PHONE")
+        val INTENT_DATA_PHONE: Uri = Uri.parse("tel:$STRING_PHONE")
     }
 }
