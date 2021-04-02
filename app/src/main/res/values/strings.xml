@@ -13,4 +13,8 @@
     <string name="calendar">Calendar</string>
     <string name="rv_result">RecyclerView Result: %1$s</string>
     <string name="lv_result">ListView Result: %1$s</string>
+    <string name="phone_hint">Input your phone</string>
+    <string name="call">Call</string>
+    <string name="pick_phone">Pick Phone Number</string>
+    <string name="got_it">Got it!!</string>
 </resources>

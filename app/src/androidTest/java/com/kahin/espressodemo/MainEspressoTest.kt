@@ -1,68 +1,65 @@
 package com.kahin.espressodemo
 
+import android.app.Activity.RESULT_OK
+import android.app.Instrumentation.ActivityResult
+import android.content.Intent
+import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.core.internal.deps.guava.collect.Iterables
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.ComponentNameMatchers.hasShortClassName
+import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
+import com.kahin.espressodemo.ui.main.activity.CallActivity
+import com.kahin.espressodemo.ui.main.activity.MainActivity
 import org.hamcrest.CoreMatchers.allOf
+import org.hamcrest.CoreMatchers.not
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class MainEspressoTest {
 
     @get:Rule
-    val homeActivityRule = ActivityScenarioRule(HomeActivity::class.java)
+    val homeActivityRule = ActivityScenarioRule(MainActivity::class.java)
 
-    @Test
-    fun mainTest() {
-        changeText_mainActivity()
+    private var isIntentInitialized = false
 
-        pressBack()
+    @Before
+    fun startUp() {
+        Intents.init()
+        isIntentInitialized = true
 
-        jumpMainFragment()
-
-        pressBack()
+        // By default Espresso Intents does not stub any Intents. Stubbing needs to be setup before
+        // every test run. In this case all external Intents will be blocked.
+        intending(not(isInternal())).respondWith(ActivityResult(RESULT_OK, null))
     }
 
-    @Test
-    fun jumpMainActivity() {
-        // Test the button which id is btn_activity.
-        onView(withId(R.id.btn_activity)).apply {
-            // Check whether the button is displayed or not.
-            check(matches(isDisplayed()))
-            // Click the button.
-            perform(click())
+    @After
+    fun finish() {
+        if (isIntentInitialized) {
+            // Otherwise will throw a NPE if Intents.init() wasn't called.
+            Intents.release()
+            isIntentInitialized = false
         }
     }
 
     @Test
-    fun jumpMainFragment() {
-        // Test the button which id is btn_fragment and content text is fragment.
-        onView(allOf(withId(R.id.btn_fragment), withText(R.string.fragment)))
-                // Check whether the button is displayed or not.
-                .check(matches(isDisplayed()))
-                // Click the button.
-                .perform(click())
-    }
-
-
-    @Test
     fun changeText_mainActivity() {
-        jumpMainActivity()
-
-        onView(withId(R.id.btn_activity))
-                // Check whether the button isn't exist or not.
-                .check(doesNotExist())
 
         onView(withId(R.id.et_name))
                 .check(matches(withHint(R.string.name_hint)))
@@ -77,8 +74,6 @@ class MainEspressoTest {
 
     @Test
     fun clickMenu_mainActivity() {
-        jumpMainActivity()
-
         onView(withId(R.id.btn_show_actionbar))
                 .perform(click())
 
@@ -94,7 +89,64 @@ class MainEspressoTest {
                 .perform(click())
     }
 
+    @Test
+    fun typePhone_ValidInput_InitiatesCall() {
+        onView(withId(R.id.et_phone))
+                .perform(typeText(STRING_PHONE), closeSoftKeyboard())
+        onView(withId(R.id.btn_call))
+                .perform(click())
+
+        // Verify that an intent to the dialer was sent with the correct action, phone number
+        // and package. Think of Intents intended API as the equivalent to Mockito's verify.
+        intended(
+                allOf(
+                        hasAction(Intent.ACTION_DIAL),
+                        hasData(INTENT_DATA__PHONE),
+                        toPackage(PACKAGE_DIALER)
+                )
+        )
+    }
+
+    @Test
+    fun typePhone_ValidInput_InitiatesCall_truth() {
+        onView(withId(R.id.et_phone))
+                .perform(typeText(STRING_PHONE), closeSoftKeyboard())
+        onView(withId(R.id.btn_call))
+                .perform(click())
+
+        // Intent validation that uses existing intent matchers that
+        // matches an outgoing intent that call a phone
+        val receivedIntent = Iterables.getOnlyElement(Intents.getIntents())
+        assertThat(receivedIntent, hasAction(Intent.ACTION_DIAL))
+        assertThat(receivedIntent, hasData(INTENT_DATA__PHONE))
+    }
+
+    @Test
+    fun pickPhone_activityResult_DisplayPhone() {
+        // Build the result to return when the activity is launched.
+//        val resultData = Intent()
+//        resultData.putExtra(MainActivity.NAME_PHONE, STRING_PHONE)
+        val result = ActivityResult(RESULT_OK, CallActivity.createResultData(STRING_PHONE))
+
+        intending(hasComponent(hasShortClassName(".CallActivity")))
+                .respondWith(result)
+
+        onView(withId(R.id.btn_pick_phone))
+                .perform(click())
+
+//        onView(withId(R.id.btn_got))
+//                .perform(click())
+
+        // Assert that the data we set up above is shown.
+        onView(withId(R.id.et_phone)).check(matches(withText(STRING_PHONE)))
+    }
+
     companion object {
         const val STRING_TO_BE_TYPED = "Tim"
+        const val PACKAGE_DIALER = "com.google.android.dialer"
+        const val STRING_PHONE = "138-8888-8888"
+        const val STRING_PICK_PHONE = "987-654-321"
+
+        val INTENT_DATA__PHONE: Uri = Uri.parse("tel:$STRING_PHONE")
     }
 }

@@ -49,4 +49,30 @@
         app:layout_constraintTop_toBottomOf="@id/btn_show_actionbar"
         android:text="@string/hide_actionbar" />
 
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/phone_hint"
+        android:singleLine="true"
+        android:inputType="phone"
+        app:layout_constraintTop_toBottomOf="@id/btn_hide_actionbar" />
+
+    <Button
+        android:id="@+id/btn_call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@id/et_phone"
+        android:text="@string/call" />
+
+    <Button
+        android:id="@+id/btn_pick_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toBottomOf="@id/btn_call"
+        android:text="@string/pick_phone" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
