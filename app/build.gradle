@@ -56,6 +56,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.3.0'
     // For intents espresso test.
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.3.0'
+    // For web espresso test.
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.3.0'
+
 
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test:rules:1.3.0'

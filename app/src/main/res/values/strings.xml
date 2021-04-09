@@ -3,6 +3,7 @@
 
     <string name="activity">activity</string>
     <string name="fragment">fragment</string>
+    <string name="web_view">web view</string>
     <string name="name">Name: </string>
     <string name="name_hint">Input your name</string>
     <string name="ok">Ok</string>
