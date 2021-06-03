@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
@@ -87,18 +86,17 @@ class MainFragment : Fragment() {
         val from = arrayOf(ROW_TITLE, ROW_CONTENT)
         val to = intArrayOf(R.id.tv_title, R.id.tv_content)
 
-        val adapter = MyListViewAdapter(requireContext(), data, R.layout.item_main, from, to)
-        lv.adapter = adapter
-        lv.onItemClickListener = AdapterView.OnItemClickListener { _, view, i, _ ->
-            val tvTitle = view.findViewById<TextView>(R.id.tv_title)
-            val tvContent = view.findViewById<TextView>(R.id.tv_content)
-
-            tvTitle.setOnClickListener {
-                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), i)
-            }
-            tvContent.setOnClickListener {
-                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), "item $i")
+        val adapter = MyListViewAdapter(requireContext(), data, R.layout.item_main, from, to) {
+            it as TextView
+            when(it.id) {
+                R.id.tv_title -> {
+                    binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), it.text)
+                }
+                R.id.tv_content -> {
+                    binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), it.text)
+                }
             }
         }
+        lv.adapter = adapter
     }
 }

@@ -1,8 +1,12 @@
 package com.kahin.espressodemo
 
+import android.view.View
+import androidx.annotation.IdRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -86,12 +90,12 @@ class FragmentEspressoTest {
                     // Performs a View Action on a matched View Holder.
                     RecyclerViewActions.actionOnHolderItem(
                             isInTheEnd(),
-                            click()
+                            itemViewClick(R.id.tv_title)
                     )
             )
 
         onView(withId(R.id.tv_rv_result))
-            .check(matches(withText(getRvResultText(ITEM_TWENTY_NINE_TITLE))))
+            .check(matches(withText(getRvResultText(COUNT))))
     }
 
     @Test
@@ -116,12 +120,12 @@ class FragmentEspressoTest {
                         // Performs a ViewAction on a view at a specific position.
                         RecyclerViewActions.actionOnItemAtPosition<MyRecyclerViewAdapter.ViewHolder>(
                                 POSITION_START,
-                                click()
+                            itemViewClick(R.id.tv_title)
                         )
                 )
 
         onView(withId(R.id.tv_rv_result))
-                .check(matches(withText(getRvResultText(ITEM_ZERO_TITLE))))
+                .check(matches(withText(getRvResultText(COUNT))))
     }
 
     private fun getRvResultText(result: String): String {
@@ -143,6 +147,26 @@ class FragmentEspressoTest {
         }
     }
 
+    /**
+     * Click item view by Id.
+     */
+    private fun itemViewClick(@IdRes targetViewId: Int): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View>? {
+                return null
+            }
+
+            override fun getDescription(): String {
+                return "ItemView is clicked."
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                val v: View? = view?.findViewById(targetViewId)
+                v?.performClick()
+            }
+        }
+    }
+
     @Test
     fun clickListViewItem9_mainFragment() {
         // A click on the row with "item: 9".
@@ -150,27 +174,21 @@ class FragmentEspressoTest {
         onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
                 .onChildView(withId(R.id.tv_title))
                 .perform(click())
-        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
-                .onChildView(withId(R.id.tv_title))
-                .perform(click())
 
         onView(withId(R.id.tv_lv_result))
-                .check(matches(withText(getLvResultText(POSITION_9_STR))))
+                .check(matches(withText(getLvResultText(ITEM_NINE_TITLE))))
     }
 
     @Test
     fun clickListViewItem1_mainFragment() {
-        // A click on the row with "item: 9".
+        // A click on the row with "item: 1".
         // Espresso scrolls through the list automatically as needed.
-        onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
-                .onChildView(withId(R.id.tv_content))
-                .perform(click())
         onData(allOf(isA(MutableMap::class.java), hasEntry(equalTo(ROW_TITLE), `is`(ITEM_NINE_TITLE))))
                 .onChildView(withId(R.id.tv_content))
                 .perform(click())
 
         onView(withId(R.id.tv_lv_result))
-                .check(matches(withText(getLvResultText(ITEM_NINE_TITLE))))
+                .check(matches(withText(getLvResultText(ITEM_NINE_COUNT))))
     }
 
     private fun getLvResultText(result: String): String {
@@ -182,7 +200,6 @@ class FragmentEspressoTest {
         const val LIST_VIEW_RESULT = "ListView Result: "
         const val COUNT = "100"
 
-        const val ITEM_ZERO_TITLE = "item 0"
         const val ITEM_ONE_TITLE = "item 1"
         const val ITEM_NINE_TITLE = "item 9"
         const val ITEM_TWENTY_TITLE = "item 20"
@@ -190,7 +207,7 @@ class FragmentEspressoTest {
         const val ITEM_TWENTY_NINE_TITLE = "item 29"
 
         const val POSITION_START = 0
-        const val POSITION_9_STR = "9"
         const val POSITION_MIDDLE = 25
+        const val ITEM_NINE_COUNT = "9000"
     }
 }
