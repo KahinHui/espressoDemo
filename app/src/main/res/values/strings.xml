@@ -18,4 +18,13 @@
     <string name="call">Call</string>
     <string name="pick_phone">Pick Phone Number</string>
     <string name="got_it">Got it!!</string>
+    <string name="show_pop_up">Show pop up window</string>
+    <string name="espresso">Espresso</string>
+    <string name="americano">Americano</string>
+    <string name="latte">Latte</string>
+    <string name="cappuccino">Cappuccino</string>
+    <string name="show_dialog">Show dialog</string>
+    <string name="dialog_title">Are you happy?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

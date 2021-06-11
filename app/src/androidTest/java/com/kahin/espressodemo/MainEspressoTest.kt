@@ -15,6 +15,7 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.ComponentNameMatchers.hasShortClassName
 import androidx.test.espresso.intent.matcher.IntentMatchers.*
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -148,6 +149,33 @@ class MainEspressoTest {
         onView(withId(R.id.et_phone)).check(matches(withText(STRING_PHONE)))
     }
 
+    @Test
+    fun click_popupWindow() {
+        onView(withId(R.id.btn_show_pop_up))
+            .perform(click())
+
+        onView(withText(R.string.espresso))
+            .inRoot(RootMatchers.isPlatformPopup())
+            .perform(click())
+
+        onView(withText(R.string.espresso))
+            .inRoot(RootMatchers.isSystemAlertWindow())
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun click_dialog() {
+        onView(withId(R.id.btn_show_dialog))
+            .perform(click())
+
+        onView(withText(R.string.yes))
+            .inRoot(RootMatchers.isDialog())
+            .perform(click())
+
+        onView(withText(R.string.yes))
+            .inRoot(RootMatchers.isSystemAlertWindow())
+            .check(matches(isDisplayed()))
+    }
     companion object {
         const val STRING_TO_BE_TYPED = "Tim"
         const val PACKAGE_DIALER = "com.google.android.dialer"

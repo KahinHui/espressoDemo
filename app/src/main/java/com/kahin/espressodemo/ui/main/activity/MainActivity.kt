@@ -1,16 +1,19 @@
 package com.kahin.espressodemo.ui.main.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_DIAL
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.databinding.ActivityMainBinding
 
@@ -24,6 +27,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityMainBinding
 
     private var mode: ActionMode? = null
+    private var popupWindow: PopupWindow? = null
+    private var flagPopupShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +41,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             btnHideActionbar.setOnClickListener(this@MainActivity)
             btnCall.setOnClickListener(this@MainActivity)
             btnPickPhone.setOnClickListener(this@MainActivity)
+            btnShowPopUp.setOnClickListener(this@MainActivity)
+            btnShowDialog.setOnClickListener(this@MainActivity)
         }
     }
 
@@ -91,7 +98,58 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 val callIntent = Intent(this@MainActivity, CallActivity::class.java)
                 startActivityForResult(callIntent, REQUEST_CODE_PICK)
             }
+            R.id.btn_show_pop_up -> showPopupWindow(context = this, view)
+            R.id.tv_espresso,
+            R.id.tv_americano,
+            R.id.tv_latte,
+            R.id.tv_cappuccino -> {
+                view as TextView
+                Toast.makeText(this, view.text, Toast.LENGTH_SHORT).show()
+                popupWindow?.dismiss()
+                flagPopupShowing = false
+            }
+            R.id.btn_show_dialog -> showDialog(this)
             else -> {}
         }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showPopupWindow(context: Context, anchor: View) {
+        if (popupWindow == null) {
+            popupWindow = PopupWindow(context)
+            popupWindow!!.apply {
+                width = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                contentView = layoutInflater.inflate(R.layout.layout_coffe, null)
+                isOutsideTouchable = false
+            }
+            val view = popupWindow!!.contentView
+            view.findViewById<TextView>(R.id.tv_espresso).setOnClickListener(this)
+            view.findViewById<TextView>(R.id.tv_americano).setOnClickListener(this)
+            view.findViewById<TextView>(R.id.tv_latte).setOnClickListener(this)
+            view.findViewById<TextView>(R.id.tv_cappuccino).setOnClickListener(this)
+
+        }
+
+        if (!flagPopupShowing) {
+            popupWindow!!.showAsDropDown(anchor, 0, -300)
+            flagPopupShowing = true
+        }
+    }
+
+    private fun showDialog(context: Context) {
+        val dialog = AlertDialog.Builder(context)
+        dialog.apply {
+            setMessage(R.string.dialog_title)
+            setPositiveButton(resources.getText(R.string.yes)) { dialog, _ ->
+                Toast.makeText(context, resources.getText(R.string.yes), Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            setNegativeButton(resources.getText(R.string.no)) { dialog, _ ->
+                Toast.makeText(context, resources.getText(R.string.no), Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
     }
 }
