@@ -62,20 +62,20 @@ class MainEspressoTest {
     fun changeText_mainActivity() {
 
         onView(withId(R.id.et_name))
-                .check(matches(withHint(R.string.name_hint)))
-                // Type 'Tim' and close soft keyboard.
-                .perform(typeText(STRING_TO_BE_TYPED), closeSoftKeyboard())
+            .check(matches(withHint(R.string.name_hint)))
+            // Type 'Tim' and close soft keyboard.
+            .perform(typeText(STRING_TO_BE_TYPED), closeSoftKeyboard())
         onView(withId(R.id.btn_ok))
-                .perform(click())
+            .perform(click())
         onView(withId(R.id.tv_name))
-                // Check whether content text is 'Name: Time' or not.
-                .check(matches(withText("Name: $STRING_TO_BE_TYPED")))
+            // Check whether content text is 'Name: Time' or not.
+            .check(matches(withText("Name: $STRING_TO_BE_TYPED")))
     }
 
     @Test
     fun clickMenu_mainActivity() {
         onView(withId(R.id.btn_show_actionbar))
-                .perform(click())
+            .perform(click())
 
         // Open the options menu OR open the overflow menu, depending on whether
         // the device has a hardware or software overflow menu button.
@@ -83,36 +83,36 @@ class MainEspressoTest {
 
         // Click the item.
         onView(withText("Key"))
-                .perform(click())
+            .perform(click())
 
         onView(withId(R.id.btn_hide_actionbar))
-                .perform(click())
+            .perform(click())
     }
 
     @Test
     fun typePhone_ValidInput_InitiatesCall() {
         onView(withId(R.id.et_phone))
-                .perform(typeText(STRING_PHONE), closeSoftKeyboard())
+            .perform(typeText(STRING_PHONE), closeSoftKeyboard())
         onView(withId(R.id.btn_call))
-                .perform(click())
+            .perform(click())
 
         // Verify that an intent to the main was sent with the correct action, phone number
         // and package. Think of Intents intended API as the equivalent to Mockito's verify.
         intended(
-                allOf(
-                        hasAction(Intent.ACTION_DIAL),
-                        hasData(INTENT_DATA_PHONE),
-                        toPackage(PACKAGE_DIALER)
-                )
+            allOf(
+                hasAction(Intent.ACTION_DIAL),
+                hasData(INTENT_DATA_PHONE),
+                toPackage(PACKAGE_DIALER)
+            )
         )
     }
 
     @Test
     fun typePhone_ValidInput_InitiatesCall_truth() {
         onView(withId(R.id.et_phone))
-                .perform(typeText(STRING_PHONE), closeSoftKeyboard())
+            .perform(typeText(STRING_PHONE), closeSoftKeyboard())
         onView(withId(R.id.btn_call))
-                .perform(click())
+            .perform(click())
 
         // Intent validation that uses existing intent matchers that
         // matches an outgoing intent that call a phone
@@ -124,10 +124,10 @@ class MainEspressoTest {
     @Test
     fun pickPhone_activityResult_DisplayPhone() {
         onView(withId(R.id.btn_pick_phone))
-                .perform(click())
+            .perform(click())
 
         onView(withId(R.id.btn_got))
-                .perform(click())
+            .perform(click())
 
         onView(withId(R.id.et_phone)).check(matches(withText(STRING_PICK_PHONE)))
     }
@@ -141,10 +141,10 @@ class MainEspressoTest {
         val result = ActivityResult(RESULT_OK, resultData)
 
         intending(hasComponent(hasShortClassName(".ui.main.activity.CallActivity")))
-                .respondWith(result)
+            .respondWith(result)
 
         onView(withId(R.id.btn_pick_phone))
-                .perform(click())
+            .perform(click())
 
         onView(withId(R.id.et_phone)).check(matches(withText(STRING_PHONE)))
     }
@@ -176,6 +176,7 @@ class MainEspressoTest {
             .inRoot(RootMatchers.isSystemAlertWindow())
             .check(matches(isDisplayed()))
     }
+
     companion object {
         const val STRING_TO_BE_TYPED = "Tim"
         const val PACKAGE_DIALER = "com.google.android.dialer"

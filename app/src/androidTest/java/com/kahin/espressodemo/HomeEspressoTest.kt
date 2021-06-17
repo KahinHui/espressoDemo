@@ -44,10 +44,15 @@ class HomeEspressoTest {
     @Test
     fun jumpMainFragment() {
         // Test the button which id is btn_fragment and content text is fragment.
-        Espresso.onView(CoreMatchers.allOf(ViewMatchers.withId(R.id.btn_fragment), ViewMatchers.withText(R.string.fragment)))
-                // Check whether the button is displayed or not.
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-                // Click the button.
-                .perform(ViewActions.click())
+        Espresso.onView(
+            CoreMatchers.allOf(
+                ViewMatchers.withId(R.id.btn_fragment),
+                ViewMatchers.withText(R.string.fragment)
+            )
+        )
+            // Check whether the button is displayed or not.
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            // Click the button.
+            .perform(ViewActions.click())
     }
 }
