@@ -11,6 +11,7 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
@@ -105,7 +106,7 @@ class FragmentEspressoTest {
             .perform(
                 // Performs a View Action on a matched View.
                 RecyclerViewActions.actionOnItem<MyRecyclerViewAdapter.ViewHolder>(
-                    hasDescendant(withText(ITEM_TWENTY_TITLE)),
+                    hasDescendant(textviewWithText(ITEM_TWENTY_TITLE)),
                     click()
                 )
             )
@@ -145,6 +146,21 @@ class FragmentEspressoTest {
 
             override fun describeTo(description: Description) {
                 description.appendText("ViewHolder with title content: $content")
+            }
+        }
+    }
+
+    /**
+     * Matches the textview with text content.
+     */
+    private fun textviewWithText(content: String): Matcher<View> {
+        return object : BoundedMatcher<View, TextView>(TextView::class.java) {
+            override fun describeTo(description: Description?) {
+                description?.appendText("Textview with content: $content")
+            }
+
+            override fun matchesSafely(item: TextView?): Boolean {
+                return item?.let { content == it.text } ?: false
             }
         }
     }
