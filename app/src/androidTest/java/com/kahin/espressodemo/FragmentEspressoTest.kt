@@ -171,7 +171,7 @@ class FragmentEspressoTest {
     private fun itemViewClick(@IdRes targetViewId: Int): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View>? {
-                return null
+                return isClickable()
             }
 
             override fun getDescription(): String {
