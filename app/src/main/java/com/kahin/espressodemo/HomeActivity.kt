@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.kahin.espressodemo.databinding.ActivityHomeBinding
 import com.kahin.espressodemo.databinding.ActivityHomeBinding.inflate
+import com.kahin.espressodemo.ui.main.activity.ComposeActivity
 import com.kahin.espressodemo.ui.main.activity.MainActivity
 import com.kahin.espressodemo.ui.main.activity.WebViewActivity
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
@@ -26,6 +27,9 @@ class HomeActivity : AppCompatActivity() {
             }
             btnWebView.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, WebViewActivity::class.java))
+            }
+            btnCompose.setOnClickListener {
+                startActivity(Intent(this@HomeActivity, ComposeActivity::class.java))
             }
         }
     }

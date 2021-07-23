@@ -18,4 +18,6 @@
     <string name="call">Call</string>
     <string name="pick_phone">Pick Phone Number</string>
     <string name="got_it">Got it!!</string>
+    <string name="title_activity_compose">ComposeActivity</string>
+    <string name="compose_activity">compose activity</string>
 </resources>
