@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,9 +42,7 @@ class ComposeActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
+    Column() {
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_background),
             contentDescription = null,
@@ -80,7 +79,7 @@ fun LayoutsCodelab() {
             )
         }
     ) { innerPadding ->
-        Column {
+        MyOwnColumn(modifier = Modifier.padding(8.dp)) {
             Greeting("Compose")
             BodyContent(Modifier.padding(innerPadding))
             LazyList()
@@ -114,22 +113,30 @@ fun LazyList() {
     val coroutineScope = rememberCoroutineScope()
 
     Column {
-        Row {
-            Button(onClick = {
-                coroutineScope.launch {
-                    scrollState.animateScrollToItem(0)
-                }
-
-            }) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(0)
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(text = "Scroll to the top")
             }
-
-            Button(onClick = {
-                coroutineScope.launch {
-                    scrollState.animateScrollToItem(listSize - 1)
-                }
-
-            }) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(listSize - 1)
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(text = "Scroll to the end")
             }
         }
@@ -150,7 +157,8 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
             .clip(RoundedCornerShape(4.dp))
             .background(MaterialTheme.colors.surface)
             .clickable { }
-            .padding(16.dp),
+            .padding(16.dp)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
@@ -174,6 +182,31 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
             Text(text = "Alfred Sisley", fontWeight = FontWeight.Bold)
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
                 Text(text = "3 minutes ago", style = typography.body2)
+            }
+        }
+    }
+}
+
+@Composable
+fun MyOwnColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+)  {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        val placeables = measurables.map { measurable ->
+            measurable.measure(constraints)
+        }
+
+        var yPosition =  0
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeables.forEach { placeable ->
+                placeable.placeRelative(x = 0, y = yPosition)
+
+                yPosition += placeable.height
             }
         }
     }
