@@ -20,4 +20,5 @@
     <string name="got_it">Got it!!</string>
     <string name="title_activity_compose">ComposeActivity</string>
     <string name="compose_activity">compose activity</string>
+    <string name="title_activity_staggered_grid">StaggeredGridActivity</string>
 </resources>

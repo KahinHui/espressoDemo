@@ -1,4 +1,4 @@
-package com.kahin.espressodemo.ui.main.activity
+package com.kahin.espressodemo.ui.main.activity.compose
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -142,7 +142,7 @@ fun LazyList() {
         }
         LazyColumn(state = scrollState) {
             items(listSize) {
-                PhotographerCard()
+                PhotographerCard(it)
             }
 
         }
@@ -150,7 +150,7 @@ fun LazyList() {
 }
 
 @Composable
-fun PhotographerCard(modifier: Modifier = Modifier) {
+fun PhotographerCard(time: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .padding(8.dp)
@@ -181,7 +181,7 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
         ) {
             Text(text = "Alfred Sisley", fontWeight = FontWeight.Bold)
             CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-                Text(text = "3 minutes ago", style = typography.body2)
+                Text(text = "$time minutes ago", style = typography.body2)
             }
         }
     }

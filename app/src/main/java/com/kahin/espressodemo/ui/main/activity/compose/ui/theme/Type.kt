@@ -1,4 +1,4 @@
-package com.kahin.espressodemo.ui.main.activity.ui.theme
+package com.kahin.espressodemo.ui.main.activity.compose.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -12,7 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EspressoDemo">
         <activity
-            android:name=".ui.main.activity.ComposeActivity"
+            android:name=".ui.main.activity.compose.StaggeredGridActivity"
+            android:exported="true"
+            android:label="@string/title_activity_staggered_grid"
+            android:theme="@style/Theme.EspressoDemo.NoActionBar" />
+        <activity
+            android:name=".ui.main.activity.compose.ComposeActivity"
             android:exported="true"
             android:label="@string/title_activity_compose"
             android:theme="@style/Theme.EspressoDemo.NoActionBar" />
