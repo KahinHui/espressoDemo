@@ -22,11 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import com.kahin.espressodemo.R
 import kotlinx.coroutines.launch
@@ -112,9 +116,9 @@ fun LazyList() {
     val scrollState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    Column {
+    ConstraintLayout(constraintSet =  decoupledConstraints()) {
         Row(
-            modifier = Modifier
+            modifier = Modifier.layoutId("row")
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
@@ -140,11 +144,30 @@ fun LazyList() {
                 Text(text = "Scroll to the end")
             }
         }
-        LazyColumn(state = scrollState) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.layoutId("lazyList")
+                .height(290.dp)
+        ) {
             items(listSize) {
                 PhotographerCard(it)
             }
 
+        }
+    }
+}
+
+private fun decoupledConstraints(): ConstraintSet {
+    return ConstraintSet {
+        val row = createRefFor("row")
+        val lazyList = createRefFor("lazyList")
+
+        constrain(row) {
+            top.linkTo(parent.top)
+        }
+        constrain(lazyList) {
+            linkTo(row.bottom, parent.bottom)
+            height = Dimension.preferredWrapContent
         }
     }
 }

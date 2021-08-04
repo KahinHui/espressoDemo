@@ -20,6 +20,8 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlin.math.max
 
@@ -60,16 +62,58 @@ val topics = listOf(
 
 @Composable
 fun Body(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier
-            .background(color = Color.LightGray)
-            .padding(16.dp)
-            .horizontalScroll(rememberScrollState())
-    ) {
-        StaggeredGrid(modifier = modifier) {
-            topics.forEach {
-                Chip(modifier = Modifier.padding(8.dp), text = it)
+    ConstraintLayout {
+        // Create references for the composables to constrain
+        val (row, button1, button2, text) = createRefs()
+
+        Row(
+            // Assign reference "row" to the Row composable
+            // and constrain it to the top of the ConstraintLayout
+            modifier = Modifier
+                .constrainAs(row) {
+                    top.linkTo(parent.top, margin = 16.dp)
+                }
+                .background(color = Color.LightGray)
+                .padding(16.dp)
+                .height(200.dp)
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+        ) {
+            StaggeredGrid(modifier = modifier) {
+                topics.forEach {
+                    Chip(modifier = Modifier.padding(8.dp), text = it)
+                }
             }
+        }
+
+        Button(
+            onClick = { /*TODO*/ },
+            // Assign reference "button" to the Button composable
+            // and constrain it to the bottom of the Row composable
+            modifier = Modifier.constrainAs(button1) {
+                top.linkTo(row.bottom, margin = 16.dp)
+            }
+        ) {
+            Text(text = "Button 1")
+        }
+
+        Text(
+            text = "Text",
+            modifier = Modifier.constrainAs(text) {
+                top.linkTo(button1.bottom, margin = 16.dp)
+                centerAround(button1.end)
+            }
+        )
+
+        val barrier = createEndBarrier(button1, text)
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.constrainAs(button2) {
+                top.linkTo(row.bottom, margin = 16.dp)
+                start.linkTo(barrier)
+            }
+        ) {
+            Text(text = "Button 2")
         }
     }
 }
