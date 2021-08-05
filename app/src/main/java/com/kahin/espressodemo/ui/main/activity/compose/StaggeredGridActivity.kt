@@ -9,19 +9,20 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlin.math.max
 
@@ -31,7 +32,10 @@ class StaggeredGridActivity : ComponentActivity() {
         setContent {
             EspressoDemoTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
+                Surface(
+                    color = MaterialTheme.colors.surface,
+                    elevation = 2.dp
+                ) {
                     Scaffold(
                         topBar = {
                             TopAppBar(
@@ -64,7 +68,7 @@ val topics = listOf(
 fun Body(modifier: Modifier = Modifier) {
     ConstraintLayout {
         // Create references for the composables to constrain
-        val (row, button1, button2, text) = createRefs()
+        val (row, button1, button2, text, userTextField, pwdTextField) = createRefs()
 
         Row(
             // Assign reference "row" to the Row composable
@@ -73,9 +77,8 @@ fun Body(modifier: Modifier = Modifier) {
                 .constrainAs(row) {
                     top.linkTo(parent.top, margin = 16.dp)
                 }
-                .background(color = Color.LightGray)
                 .padding(16.dp)
-                .height(200.dp)
+                .height(150.dp)
                 .fillMaxWidth()
                 .horizontalScroll(rememberScrollState())
         ) {
@@ -86,12 +89,41 @@ fun Body(modifier: Modifier = Modifier) {
             }
         }
 
+        var userText by remember  { mutableStateOf("") }
+        var pwdText by remember  { mutableStateOf("") }
+
+        TextField(
+            modifier = Modifier
+                .constrainAs(userTextField) {
+                    top.linkTo(row.bottom, margin = 16.dp)
+                    linkTo(parent.start, parent.end)
+                },
+            value = userText,
+            onValueChange = { userText = it },
+            label = { Text(text = "User") },
+            singleLine = true
+        )
+
+        OutlinedTextField(
+            modifier = Modifier
+                .constrainAs(pwdTextField) {
+                    top.linkTo(userTextField.bottom)
+                    linkTo(parent.start, parent.end)
+                },
+            value = pwdText,
+            onValueChange = { pwdText = it },
+            label = { Text(text = "Password") },
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+        )
+
         Button(
             onClick = { /*TODO*/ },
             // Assign reference "button" to the Button composable
             // and constrain it to the bottom of the Row composable
             modifier = Modifier.constrainAs(button1) {
-                top.linkTo(row.bottom, margin = 16.dp)
+                top.linkTo(pwdTextField.bottom, margin = 16.dp)
             }
         ) {
             Text(text = "Button 1")
@@ -109,7 +141,7 @@ fun Body(modifier: Modifier = Modifier) {
         Button(
             onClick = { /*TODO*/ },
             modifier = Modifier.constrainAs(button2) {
-                top.linkTo(row.bottom, margin = 16.dp)
+                top.linkTo(pwdTextField.bottom, margin = 16.dp)
                 start.linkTo(barrier)
             }
         ) {
@@ -184,8 +216,9 @@ fun StaggeredGrid(
 fun Chip(modifier: Modifier = Modifier, text: String) {
     Card(
         modifier = modifier,
-        border = BorderStroke(color = Color.Black, width = Dp.Hairline),
-        shape = RoundedCornerShape(8.dp)
+        border = BorderStroke(color = MaterialTheme.colors.secondaryVariant, width = Dp.Hairline),
+        shape = RoundedCornerShape(8.dp),
+        backgroundColor = MaterialTheme.colors.surface
     ) {
         Row(
             modifier = Modifier.padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),

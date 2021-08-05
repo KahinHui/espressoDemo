@@ -1,6 +1,7 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -9,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
@@ -20,12 +23,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -33,13 +41,16 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import com.kahin.espressodemo.R
+import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlinx.coroutines.launch
 
 class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LayoutsCodelab()
+            EspressoDemoTheme {
+                LayoutsCodelab()
+            }
         }
     }
 }
@@ -61,9 +72,17 @@ fun Greeting(name: String) {
         Text(text = "hello $name~ fsdf sdf sdfsfsdfs dkadla s dk sad a,nlda  dasda jfjlskafjlslfjkls",
             style = typography.h6,
             maxLines = 2,
-            overflow = TextOverflow.Ellipsis)
-        Text(text = "hello $name~", style = typography.body2)
-        Text(text = "hello $name~", style = typography.body2)
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(text = "hello $name~", style = typography.body2, fontWeight = FontWeight.Bold)
+        Text(
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+                    append("hello")
+                }
+                append(" $name~")
+            }
+        )
     }
 }
 
@@ -94,8 +113,49 @@ fun LayoutsCodelab() {
 @Composable
 fun BodyContent(modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(8.dp)) {
-        Text(text = "Hi there!")
+        SelectionContainer {
+            Text(text = "Hi there! This text is selectable")
+        }
         Text(text = "Thanks for going through the Layouts codelab")
+
+        val annotatedText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground)) {
+                append("hello~ Click ")
+            }
+
+            // We attach this *URL* annotation to the following content
+            // until `pop()` is called
+            pushStringAnnotation(
+                tag = "URL",
+                annotation = "Https://bing.com"
+            )
+
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Blue,
+                    fontWeight = FontWeight.Bold
+                )
+            ) {
+                append("here! ")
+            }
+
+            pop()
+
+            withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground)) {
+                append("Ciao!")
+            }
+        }
+
+        ClickableText(
+            text = annotatedText,
+            onClick = { offset ->
+                // We check if there is an *URL* annotation attached to the text
+                // at the clicked position
+                annotatedText.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                    .firstOrNull()?.let {
+                        Log.d("ClickableText", "clicked: ${it.item}")
+                    }
+            })
     }
 }
 
@@ -118,7 +178,8 @@ fun LazyList() {
 
     ConstraintLayout(constraintSet =  decoupledConstraints()) {
         Row(
-            modifier = Modifier.layoutId("row")
+            modifier = Modifier
+                .layoutId("row")
                 .fillMaxWidth()
                 .padding(8.dp)
         ) {
@@ -146,7 +207,8 @@ fun LazyList() {
         }
         LazyColumn(
             state = scrollState,
-            modifier = Modifier.layoutId("lazyList")
+            modifier = Modifier
+                .layoutId("lazyList")
                 .height(290.dp)
         ) {
             items(listSize) {
