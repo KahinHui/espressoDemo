@@ -1,28 +1,33 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
+import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.kahin.espressodemo.GlobalApp
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlin.math.max
 
@@ -50,7 +55,7 @@ class StaggeredGridActivity : ComponentActivity() {
                             )
                         }
                     ) { innerPadding ->
-                        Body(Modifier.padding(innerPadding))
+                        Body(applicationContext, Modifier.padding(innerPadding))
                     }
                 }
             }
@@ -65,10 +70,10 @@ val topics = listOf(
 )
 
 @Composable
-fun Body(modifier: Modifier = Modifier) {
+fun Body(context: Context, modifier: Modifier = Modifier) {
     ConstraintLayout {
         // Create references for the composables to constrain
-        val (row, button1, button2, text, userTextField, pwdTextField) = createRefs()
+        val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
 
         Row(
             // Assign reference "row" to the Row composable
@@ -147,6 +152,49 @@ fun Body(modifier: Modifier = Modifier) {
         ) {
             Text(text = "Button 2")
         }
+
+        var searchText by remember { mutableStateOf("")}
+        TextField(
+            modifier = Modifier.constrainAs(searchTextField) {
+                top.linkTo(text.bottom, margin = 16.dp)
+                linkTo(parent.start, parent.end)
+            },
+            value = searchText,
+            onValueChange = { searchText = it},
+            label = { Text(text = "Search") },
+            shape = RoundedCornerShape(16.dp),
+            leadingIcon = @Composable {
+                Image(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
+                    }
+                )
+            },
+            trailingIcon = @Composable {
+                Image(
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = null,
+                    modifier = Modifier.clickable {
+                        searchText = ""
+                    }
+                )
+            },
+            keyboardOptions =  KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = {
+                Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
+            }),
+            singleLine = true,
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = MaterialTheme.colors.primary,
+                unfocusedIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Red,
+                disabledIndicatorColor = Color.Gray
+            ),
+            isError = false,
+            placeholder = @Composable { Text(text = "Text something") }
+        )
     }
 }
 
@@ -239,6 +287,6 @@ fun Chip(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun DefaultPreview() {
     EspressoDemoTheme {
-        Body()
+        Body(GlobalApp.context)
     }
 }
