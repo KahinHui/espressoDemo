@@ -87,6 +87,8 @@ dependencies {
     implementation "androidx.compose.foundation:foundation:$compose_version"
     // Material Design
     implementation "androidx.compose.material:material:$compose_version"
+    // Integration with observables
+    implementation"androidx.compose.runtime:runtime-livedata:$compose_version"
     // Test for compose
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     // ConstraintLayout for compose

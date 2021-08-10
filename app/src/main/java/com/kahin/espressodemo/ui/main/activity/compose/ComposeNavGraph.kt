@@ -31,7 +31,7 @@ fun ComposeNavGraph(
             LogInScreen(actions)
         }
         composable(MainDestinations.HOME_ROUTE) {
-            HomeScreen()
+            HomeScreen(actions)
         }
     }
 }
@@ -42,6 +42,13 @@ fun ComposeNavGraph(
 class MainActions(navController: NavHostController) {
     val toHome: () -> Unit = {
         navController.navigate(MainDestinations.HOME_ROUTE)
+    }
+    val logOut: () -> Unit = {
+        navController.navigate(MainDestinations.LOG_IN_ROUTE) {
+            popUpTo(MainDestinations.LOG_IN_ROUTE) {
+                inclusive = true
+            }
+        }
     }
     val upPress: () -> Unit = {
         navController.navigateUp()

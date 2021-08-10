@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
+import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.User
 import kotlin.math.max
 
 @Composable
@@ -67,130 +70,141 @@ val topics = listOf(
 fun Body(toHome: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    ConstraintLayout {
-        // Create references for the composables to constrain
-        val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
+    val viewModel: LogInViewModel = viewModel()
+    val result: User by viewModel.userData.observeAsState(User("", ""))
 
-        Row(
-            // Assign reference "row" to the Row composable
-            // and constrain it to the top of the ConstraintLayout
-            modifier = Modifier
-                .constrainAs(row) {
-                    top.linkTo(parent.top, margin = 16.dp)
-                }
-                .padding(16.dp)
-                .height(150.dp)
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-        ) {
-            StaggeredGrid(modifier = modifier) {
-                topics.forEach {
-                    Chip(modifier = Modifier.padding(8.dp), text = it)
+    viewModel.logOut()
+
+    if (result.isLogIn) {
+        toHome()
+    } else {
+        ConstraintLayout {
+            // Create references for the composables to constrain
+            val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
+
+            Row(
+                // Assign reference "row" to the Row composable
+                // and constrain it to the top of the ConstraintLayout
+                modifier = Modifier
+                    .constrainAs(row) {
+                        top.linkTo(parent.top, margin = 16.dp)
+                    }
+                    .padding(16.dp)
+                    .height(150.dp)
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState())
+            ) {
+                StaggeredGrid(modifier = modifier) {
+                    topics.forEach {
+                        Chip(modifier = Modifier.padding(8.dp), text = it)
+                    }
                 }
             }
-        }
 
-        var userText by remember  { mutableStateOf("") }
-        var pwdText by remember  { mutableStateOf("") }
+            var userText by remember { mutableStateOf("") }
+            var pwdText by remember { mutableStateOf("") }
 
-        TextField(
-            modifier = Modifier
-                .constrainAs(userTextField) {
-                    top.linkTo(row.bottom, margin = 16.dp)
+            TextField(
+                modifier = Modifier
+                    .constrainAs(userTextField) {
+                        top.linkTo(row.bottom, margin = 16.dp)
+                        linkTo(parent.start, parent.end)
+                    },
+                value = userText,
+                onValueChange = { userText = it },
+                label = { Text(text = "User") },
+                singleLine = true
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .constrainAs(pwdTextField) {
+                        top.linkTo(userTextField.bottom)
+                        linkTo(parent.start, parent.end)
+                    },
+                value = pwdText,
+                onValueChange = { pwdText = it },
+                label = { Text(text = "Password") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            )
+
+            Button(
+                onClick = {
+                    viewModel.logIn(User(userText, pwdText))
+                },
+                // Assign reference "button" to the Button composable
+                // and constrain it to the bottom of the Row composable
+                modifier = Modifier.constrainAs(button1) {
+                    top.linkTo(pwdTextField.bottom, margin = 16.dp)
+                }
+            ) {
+                Text(text = "Button 1")
+            }
+
+            Text(
+                text = "Text",
+                modifier = Modifier.constrainAs(text) {
+                    top.linkTo(button1.bottom, margin = 16.dp)
+                    centerAround(button1.end)
+                }
+            )
+
+            val barrier = createEndBarrier(button1, text)
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier.constrainAs(button2) {
+                    top.linkTo(pwdTextField.bottom, margin = 16.dp)
+                    start.linkTo(barrier)
+                }
+            ) {
+                Text(text = "Button 2")
+            }
+
+            var searchText by remember { mutableStateOf("") }
+            TextField(
+                modifier = Modifier.constrainAs(searchTextField) {
+                    top.linkTo(text.bottom, margin = 16.dp)
                     linkTo(parent.start, parent.end)
                 },
-            value = userText,
-            onValueChange = { userText = it },
-            label = { Text(text = "User") },
-            singleLine = true
-        )
-
-        OutlinedTextField(
-            modifier = Modifier
-                .constrainAs(pwdTextField) {
-                    top.linkTo(userTextField.bottom)
-                    linkTo(parent.start, parent.end)
+                value = searchText,
+                onValueChange = { searchText = it },
+                label = { Text(text = "Search") },
+                shape = RoundedCornerShape(16.dp),
+                leadingIcon = @Composable {
+                    Image(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
+                        }
+                    )
                 },
-            value = pwdText,
-            onValueChange = { pwdText = it },
-            label = { Text(text = "Password") },
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-        )
-
-        Button(
-            onClick = { toHome() },
-            // Assign reference "button" to the Button composable
-            // and constrain it to the bottom of the Row composable
-            modifier = Modifier.constrainAs(button1) {
-                top.linkTo(pwdTextField.bottom, margin = 16.dp)
-            }
-        ) {
-            Text(text = "Button 1")
+                trailingIcon = @Composable {
+                    Image(
+                        imageVector = Icons.Filled.Clear,
+                        contentDescription = null,
+                        modifier = Modifier.clickable {
+                            searchText = ""
+                        }
+                    )
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = {
+                    Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
+                }),
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = MaterialTheme.colors.primary,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Red,
+                    disabledIndicatorColor = Color.Gray
+                ),
+                isError = false,
+                placeholder = @Composable { Text(text = "Text something") }
+            )
         }
-
-        Text(
-            text = "Text",
-            modifier = Modifier.constrainAs(text) {
-                top.linkTo(button1.bottom, margin = 16.dp)
-                centerAround(button1.end)
-            }
-        )
-
-        val barrier = createEndBarrier(button1, text)
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier.constrainAs(button2) {
-                top.linkTo(pwdTextField.bottom, margin = 16.dp)
-                start.linkTo(barrier)
-            }
-        ) {
-            Text(text = "Button 2")
-        }
-
-        var searchText by remember { mutableStateOf("")}
-        TextField(
-            modifier = Modifier.constrainAs(searchTextField) {
-                top.linkTo(text.bottom, margin = 16.dp)
-                linkTo(parent.start, parent.end)
-            },
-            value = searchText,
-            onValueChange = { searchText = it},
-            label = { Text(text = "Search") },
-            shape = RoundedCornerShape(16.dp),
-            leadingIcon = @Composable {
-                Image(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
-                    }
-                )
-            },
-            trailingIcon = @Composable {
-                Image(
-                    imageVector = Icons.Filled.Clear,
-                    contentDescription = null,
-                    modifier = Modifier.clickable {
-                        searchText = ""
-                    }
-                )
-            },
-            keyboardOptions =  KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = {
-                Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
-            }),
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = MaterialTheme.colors.primary,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Red,
-                disabledIndicatorColor = Color.Gray
-            ),
-            isError = false,
-            placeholder = @Composable { Text(text = "Text something") }
-        )
     }
 }
 

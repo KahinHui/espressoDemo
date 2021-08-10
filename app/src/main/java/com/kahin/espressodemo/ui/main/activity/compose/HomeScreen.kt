@@ -2,6 +2,8 @@ package com.kahin.espressodemo.ui.main.activity.compose
 
 import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,9 +17,7 @@ import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,12 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavHostController
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigationEvent: MainActions) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -49,7 +51,9 @@ fun HomeScreen() {
                     Text(text = "LayoutsCodelab")
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        onNavigationEvent.logOut()
+                    }) {
                         Icon(Icons.Filled.Favorite, contentDescription = null)
                     }
                 }
@@ -66,7 +70,7 @@ fun HomeScreen() {
 
 @Composable
 fun Greeting(name: String) {
-    Column() {
+    Column {
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_background),
             contentDescription = null,
@@ -78,11 +82,24 @@ fun Greeting(name: String) {
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "hello $name~ fsdf sdf sdfsfsdfs dkadla s dk sad a,nlda  dasda jfjlskafjlslfjkls",
-            style = typography.h6,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+        var isExpanded by remember { mutableStateOf(false) }
+        val surfaceColor: Color by animateColorAsState(
+            if (isExpanded) MaterialTheme.colors.primary else MaterialTheme.colors.surface
         )
+
+        Surface(
+            color = surfaceColor,
+            modifier = Modifier.animateContentSize().padding(1.dp)
+        ) {
+            Text(
+                text = "hello $name~ fsdf sdf sdfsfsdfs dkadla s dk sad a,nlda  dasda jfjlska" +
+                        "fjlslfjkls djs djlskj lsajldjsa;l dj;lajd;l aj;ld ja;ljd;laj;dja;l ;alj",
+                style = typography.h6,
+                maxLines = if (isExpanded) Int.MAX_VALUE else 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.clickable { isExpanded = !isExpanded },
+            )
+        }
         Text(text = "hello $name~", style = typography.body2, fontWeight = FontWeight.Bold)
         Text(
             buildAnnotatedString {
@@ -293,6 +310,6 @@ fun Preview() {
     EspressoDemoTheme() {
 //    Greeting("Compose")
 //    PhotographerCard()
-        HomeScreen()
+        HomeScreen(MainActions(NavHostController(LocalContext.current)))
     }
 }
