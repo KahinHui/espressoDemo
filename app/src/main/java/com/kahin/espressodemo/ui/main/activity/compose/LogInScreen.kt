@@ -1,10 +1,6 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
-import android.content.Context
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -27,38 +24,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.kahin.espressodemo.GlobalApp
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlin.math.max
 
-class StaggeredGridActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            EspressoDemoTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    color = MaterialTheme.colors.surface,
-                    elevation = 2.dp
-                ) {
-                    Scaffold(
-                        topBar = {
-                            TopAppBar(
-                                title = {
-                                    Text(text = "LayoutsCodelab")
-                                },
-                                actions = {
-                                    IconButton(onClick = { /* doSomething() */ }) {
-                                        Icon(Icons.Filled.Favorite, contentDescription = null)
-                                    }
-                                }
-                            )
+@Composable
+fun LogInScreen(
+   onNavigationEvent: MainActions,
+//    openDrawer: () -> Unit,
+    scaffoldState: ScaffoldState = rememberScaffoldState()
+) {
+    // A surface container using the 'background' color from the theme
+    Surface(
+        color = MaterialTheme.colors.surface,
+        elevation = 2.dp
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "LayoutsCodelab")
+                    },
+                    actions = {
+                        IconButton(onClick = { /* doSomething() */ }) {
+                            Icon(Icons.Filled.Favorite, contentDescription = null)
                         }
-                    ) { innerPadding ->
-                        Body(applicationContext, Modifier.padding(innerPadding))
                     }
-                }
+                )
             }
+        ) { innerPadding ->
+            Body(onNavigationEvent.toHome, Modifier.padding(innerPadding))
         }
     }
 }
@@ -70,7 +64,9 @@ val topics = listOf(
 )
 
 @Composable
-fun Body(context: Context, modifier: Modifier = Modifier) {
+fun Body(toHome: () -> Unit, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
     ConstraintLayout {
         // Create references for the composables to constrain
         val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
@@ -124,7 +120,7 @@ fun Body(context: Context, modifier: Modifier = Modifier) {
         )
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { toHome() },
             // Assign reference "button" to the Button composable
             // and constrain it to the bottom of the Row composable
             modifier = Modifier.constrainAs(button1) {
@@ -244,7 +240,7 @@ fun StaggeredGrid(
         }
 
         // Set the size of the parent layout
-        layout(constraints.maxWidth, constraints.maxHeight){
+        layout(width, height){
             // x cord we have placed up to, per row
             val rowX = IntArray(rows) { 0 }
 
@@ -287,6 +283,6 @@ fun Chip(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun DefaultPreview() {
     EspressoDemoTheme {
-        Body(GlobalApp.context)
+        Body(toHome = {})
     }
 }
