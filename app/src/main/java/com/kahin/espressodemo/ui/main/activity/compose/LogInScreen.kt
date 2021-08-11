@@ -1,5 +1,6 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,9 +34,41 @@ import kotlin.math.max
 
 @Composable
 fun LogInScreen(
-   onNavigationEvent: MainActions,
+    onNavigationEvent: MainActions,
 //    openDrawer: () -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState()
+) {
+    val context = LocalContext.current
+
+    val viewModel: LogInViewModel = viewModel()
+    val result: User by viewModel.userData.observeAsState(User("", ""))
+
+    viewModel.logOut()
+
+    BodyContent(
+        context,
+        result,
+        iconClick = {},
+        toHome = onNavigationEvent.toHome,
+        logIn = { name, pwd -> viewModel.logIn(User(name, pwd)) },
+        signUp = {}
+    )
+}
+
+val topics = listOf(
+    "Arts & Crafts", "Beauty", "Books", "Business", "Comics", "Culinary",
+    "Design", "Fashion", "Film", "History", "Maths", "Music", "People", "Philosophy",
+    "Religion", "Social sciences", "Technology", "TV", "Writing"
+)
+
+@Composable
+fun BodyContent(
+    context: Context,
+    result: User,
+    iconClick: () -> Unit,
+    toHome: () -> Unit,
+    logIn: (String, String) -> Unit,
+    signUp: () -> Unit
 ) {
     // A surface container using the 'background' color from the theme
     Surface(
@@ -48,162 +82,147 @@ fun LogInScreen(
                         Text(text = "LayoutsCodelab")
                     },
                     actions = {
-                        IconButton(onClick = { /* doSomething() */ }) {
+                        IconButton(onClick = { iconClick() }) {
                             Icon(Icons.Filled.Favorite, contentDescription = null)
                         }
                     }
                 )
             }
         ) { innerPadding ->
-            Body(onNavigationEvent.toHome, Modifier.padding(innerPadding))
-        }
-    }
-}
+            if (result.isLogIn) {
+                toHome()
+            } else {
+                ConstraintLayout {
+                    // Create references for the composables to constrain
+                    val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
 
-val topics = listOf(
-    "Arts & Crafts", "Beauty", "Books", "Business", "Comics", "Culinary",
-    "Design", "Fashion", "Film", "History", "Maths", "Music", "People", "Philosophy",
-    "Religion", "Social sciences", "Technology", "TV", "Writing"
-)
-
-@Composable
-fun Body(toHome: () -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-
-    val viewModel: LogInViewModel = viewModel()
-    val result: User by viewModel.userData.observeAsState(User("", ""))
-
-    viewModel.logOut()
-
-    if (result.isLogIn) {
-        toHome()
-    } else {
-        ConstraintLayout {
-            // Create references for the composables to constrain
-            val (row, button1, button2, text, userTextField, pwdTextField, searchTextField) = createRefs()
-
-            Row(
-                // Assign reference "row" to the Row composable
-                // and constrain it to the top of the ConstraintLayout
-                modifier = Modifier
-                    .constrainAs(row) {
-                        top.linkTo(parent.top, margin = 16.dp)
+                    Row(
+                        // Assign reference "row" to the Row composable
+                        // and constrain it to the top of the ConstraintLayout
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .constrainAs(row) {
+                                top.linkTo(parent.top, margin = 16.dp)
+                            }
+                            .padding(16.dp)
+                            .height(150.dp)
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState())
+                    ) {
+                        StaggeredGrid {
+                            topics.forEach {
+                                Chip(modifier = Modifier.padding(8.dp), text = it)
+                            }
+                        }
                     }
-                    .padding(16.dp)
-                    .height(150.dp)
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-            ) {
-                StaggeredGrid(modifier = modifier) {
-                    topics.forEach {
-                        Chip(modifier = Modifier.padding(8.dp), text = it)
+
+                    var userText by rememberSaveable { mutableStateOf("") }
+                    var pwdText by remember { mutableStateOf("") }
+
+                    TextField(
+                        modifier = Modifier
+                            .constrainAs(userTextField) {
+                                top.linkTo(row.bottom, margin = 16.dp)
+                                linkTo(parent.start, parent.end)
+                            },
+                        value = userText,
+                        onValueChange = { userText = it },
+                        label = { Text(text = "User") },
+                        singleLine = true
+                    )
+
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .constrainAs(pwdTextField) {
+                                top.linkTo(userTextField.bottom)
+                                linkTo(parent.start, parent.end)
+                            },
+                        value = pwdText,
+                        onValueChange = { pwdText = it },
+                        label = { Text(text = "Password") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+
+                    Button(
+                        onClick = {
+                            logIn(userText, pwdText)
+                        },
+                        // Assign reference "button" to the Button composable
+                        // and constrain it to the bottom of the Row composable
+                        modifier = Modifier.constrainAs(button1) {
+                            top.linkTo(pwdTextField.bottom, margin = 16.dp)
+                            linkTo(parent.start, parent.end)
+                        }
+                    ) {
+                        Text(text = "Log in")
                     }
-                }
-            }
 
-            var userText by remember { mutableStateOf("") }
-            var pwdText by remember { mutableStateOf("") }
+                    Text(
+                        text = "Or",
+                        modifier = Modifier.constrainAs(text) {
+                            top.linkTo(button1.bottom, margin = 16.dp)
+                            centerAround(button1.end)
+                        }
+                    )
 
-            TextField(
-                modifier = Modifier
-                    .constrainAs(userTextField) {
-                        top.linkTo(row.bottom, margin = 16.dp)
-                        linkTo(parent.start, parent.end)
-                    },
-                value = userText,
-                onValueChange = { userText = it },
-                label = { Text(text = "User") },
-                singleLine = true
-            )
+                    val barrier = createEndBarrier(button1, text)
+                    Button(
+                        onClick = { signUp() },
+                        modifier = Modifier.constrainAs(button2) {
+                            top.linkTo(text.bottom, margin = 16.dp)
+                            start.linkTo(barrier)
+                        }
+                    ) {
+                        Text(text = "Sign up")
+                    }
 
-            OutlinedTextField(
-                modifier = Modifier
-                    .constrainAs(pwdTextField) {
-                        top.linkTo(userTextField.bottom)
-                        linkTo(parent.start, parent.end)
-                    },
-                value = pwdText,
-                onValueChange = { pwdText = it },
-                label = { Text(text = "Password") },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-            )
-
-            Button(
-                onClick = {
-                    viewModel.logIn(User(userText, pwdText))
-                },
-                // Assign reference "button" to the Button composable
-                // and constrain it to the bottom of the Row composable
-                modifier = Modifier.constrainAs(button1) {
-                    top.linkTo(pwdTextField.bottom, margin = 16.dp)
-                }
-            ) {
-                Text(text = "Button 1")
-            }
-
-            Text(
-                text = "Text",
-                modifier = Modifier.constrainAs(text) {
-                    top.linkTo(button1.bottom, margin = 16.dp)
-                    centerAround(button1.end)
-                }
-            )
-
-            val barrier = createEndBarrier(button1, text)
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.constrainAs(button2) {
-                    top.linkTo(pwdTextField.bottom, margin = 16.dp)
-                    start.linkTo(barrier)
-                }
-            ) {
-                Text(text = "Button 2")
-            }
-
-            var searchText by remember { mutableStateOf("") }
-            TextField(
-                modifier = Modifier.constrainAs(searchTextField) {
-                    top.linkTo(text.bottom, margin = 16.dp)
-                    linkTo(parent.start, parent.end)
-                },
-                value = searchText,
-                onValueChange = { searchText = it },
-                label = { Text(text = "Search") },
-                shape = RoundedCornerShape(16.dp),
-                leadingIcon = @Composable {
-                    Image(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
+                    var searchText by remember { mutableStateOf("") }
+                    TextField(
+                        modifier = Modifier.constrainAs(searchTextField) {
+                            top.linkTo(button2.bottom, margin = 16.dp)
+                            linkTo(parent.start, parent.end)
+                        },
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        label = { Text(text = "Search") },
+                        shape = RoundedCornerShape(16.dp),
+                        leadingIcon = @Composable {
+                            Image(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            )
+                        },
+                        trailingIcon = @Composable {
+                            Image(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    searchText = ""
+                                }
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = {
                             Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
-                        }
+                        }),
+                        singleLine = true,
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = MaterialTheme.colors.primary,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            errorIndicatorColor = Color.Red,
+                            disabledIndicatorColor = Color.Gray
+                        ),
+                        isError = false,
+                        placeholder = @Composable { Text(text = "Text something") }
                     )
-                },
-                trailingIcon = @Composable {
-                    Image(
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            searchText = ""
-                        }
-                    )
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = {
-                    Toast.makeText(context, "search $searchText", Toast.LENGTH_LONG).show()
-                }),
-                singleLine = true,
-                colors = TextFieldDefaults.textFieldColors(
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Red,
-                    disabledIndicatorColor = Color.Gray
-                ),
-                isError = false,
-                placeholder = @Composable { Text(text = "Text something") }
-            )
+                }
+            }
         }
     }
 }
@@ -250,11 +269,11 @@ fun StaggeredGrid(
         // Y of each row, based on the height accumulation of previous rows
         val rowY = IntArray(rows) { 0 }
         for (i in 1 until rows) {
-            rowY[i] = rowY[i-1] + rowHeights[i-1]
+            rowY[i] = rowY[i - 1] + rowHeights[i - 1]
         }
 
         // Set the size of the parent layout
-        layout(width, height){
+        layout(width, height) {
             // x cord we have placed up to, per row
             val rowX = IntArray(rows) { 0 }
 
@@ -297,6 +316,13 @@ fun Chip(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun DefaultPreview() {
     EspressoDemoTheme {
-        Body(toHome = {})
+        BodyContent(
+            LocalContext.current,
+            User("", ""),
+            {},
+            {},
+            { _, _ -> },
+            {}
+        )
     }
 }

@@ -44,6 +44,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(onNavigationEvent: MainActions) {
+    HomeContent {
+        onNavigationEvent.logOut()
+    }
+}
+
+@Composable
+fun HomeContent(logOut: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,9 +58,7 @@ fun HomeScreen(onNavigationEvent: MainActions) {
                     Text(text = "LayoutsCodelab")
                 },
                 actions = {
-                    IconButton(onClick = {
-                        onNavigationEvent.logOut()
-                    }) {
+                    IconButton(onClick = { logOut() }) {
                         Icon(Icons.Filled.Favorite, contentDescription = null)
                     }
                 }
@@ -89,7 +94,9 @@ fun Greeting(name: String) {
 
         Surface(
             color = surfaceColor,
-            modifier = Modifier.animateContentSize().padding(1.dp)
+            modifier = Modifier
+                .animateContentSize()
+                .padding(1.dp)
         ) {
             Text(
                 text = "hello $name~ fsdf sdf sdfsfsdfs dkadla s dk sad a,nlda  dasda jfjlska" +
