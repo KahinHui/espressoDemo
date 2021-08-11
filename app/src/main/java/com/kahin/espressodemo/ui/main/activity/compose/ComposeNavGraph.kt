@@ -31,7 +31,10 @@ fun ComposeNavGraph(
             LogInScreen(actions)
         }
         composable(MainDestinations.HOME_ROUTE) {
-            HomeScreen(actions)
+            HomeScreen(
+                actions,
+                openDrawer = openDrawer
+            )
         }
     }
 }

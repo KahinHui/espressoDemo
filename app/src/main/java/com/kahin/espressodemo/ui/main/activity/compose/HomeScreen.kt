@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -43,22 +44,41 @@ import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoThem
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(onNavigationEvent: MainActions) {
-    HomeContent {
-        onNavigationEvent.logOut()
-    }
+fun HomeScreen(
+    onNavigationEvent: MainActions,
+    openDrawer: () -> Unit
+) {
+    HomeContent(
+        openDrawer = openDrawer,
+        logOut = {
+            onNavigationEvent.logOut()
+        }
+    )
 }
 
 @Composable
-fun HomeContent(logOut: () -> Unit) {
+fun HomeContent(
+    openDrawer: () -> Unit,
+    logOut: () -> Unit
+) {
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(text = "LayoutsCodelab")
                 },
+                navigationIcon = {
+                    IconButton(onClick = { coroutineScope.launch { openDrawer() } }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_launcher_background),
+                            contentDescription = stringResource(id = R.string.activity)
+                        )
+                    }
+                },
                 actions = {
-                    IconButton(onClick = { logOut() }) {
+                    IconButton(onClick = {}) {
                         Icon(Icons.Filled.Favorite, contentDescription = null)
                     }
                 }
@@ -317,6 +337,8 @@ fun Preview() {
     EspressoDemoTheme() {
 //    Greeting("Compose")
 //    PhotographerCard()
-        HomeScreen(MainActions(NavHostController(LocalContext.current)))
+        HomeScreen(
+            MainActions(NavHostController(LocalContext.current))
+        ) {}
     }
 }

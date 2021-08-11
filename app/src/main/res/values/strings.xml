@@ -21,4 +21,8 @@
     <string name="title_activity_compose">ComposeActivity</string>
     <string name="compose_activity">compose activity</string>
     <string name="title_activity_staggered_grid">StaggeredGridActivity</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="log_out">Log out</string>
+    <string name="user_or_pwd_incorrect">User name or password incorrect</string>
 </resources>

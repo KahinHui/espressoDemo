@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
+import kotlinx.coroutines.launch
 
 class ComposeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +45,21 @@ fun ComposeApp() {
         Scaffold(
             scaffoldState = scaffoldState,
             drawerContent = {
+                AppDrawer(
+                    currentRoute = currentRoute,
+                    toHome = { navController.navigate(MainDestinations.HOME_ROUTE) {
+                        popUpTo(MainDestinations.HOME_ROUTE) {
+                            inclusive = true
+                        }
+                    } },
+                    logOut = { navController.navigate(MainDestinations.LOG_IN_ROUTE) {
+                        popUpTo(MainDestinations.LOG_IN_ROUTE) {
+                            inclusive = true
+                        }
+                    } }
+                ) {
+                    coroutineScope.launch { scaffoldState.drawerState.close() }
+                }
             }
         ) {
             ComposeNavGraph(
