@@ -16,6 +16,7 @@ class LogInViewModel : ViewModel() {
     fun logIn(user: User)/*: Flow<User>*/ {
 //        return flow {
             user.isLogIn = user.name == "123" && user.pwd == "111"
+            user.isSuccess = user.isLogIn
             _userData.postValue(user)
 //        }
     }

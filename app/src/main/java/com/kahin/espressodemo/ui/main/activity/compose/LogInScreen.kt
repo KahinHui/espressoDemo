@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,14 +29,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.kahin.espressodemo.R
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.User
+import kotlinx.coroutines.launch
 import kotlin.math.max
 
 @Composable
 fun LogInScreen(
     onNavigationEvent: MainActions,
-//    openDrawer: () -> Unit,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     val context = LocalContext.current
@@ -51,7 +53,8 @@ fun LogInScreen(
         iconClick = {},
         toHome = onNavigationEvent.toHome,
         logIn = { name, pwd -> viewModel.logIn(User(name, pwd)) },
-        signUp = {}
+        signUp = {},
+        scaffoldState = scaffoldState
     )
 }
 
@@ -68,8 +71,27 @@ fun BodyContent(
     iconClick: () -> Unit,
     toHome: () -> Unit,
     logIn: (String, String) -> Unit,
-    signUp: () -> Unit
+    signUp: () -> Unit,
+    scaffoldState: ScaffoldState
 ) {
+    val errorMsg = stringResource(id = R.string.user_or_pwd_incorrect)
+    val snackbarActionLabel = stringResource(id = R.string.dismiss)
+    val scope = rememberCoroutineScope()
+
+    result.isSuccess?.let {
+        if (!it) {
+            // `LaunchedEffect` will cancel and re-launch if
+            // `scaffoldState.snackbarHostState` changes
+//            LaunchedEffect(scaffoldState.snackbarHostState) {
+            scope.launch {
+                scaffoldState.snackbarHostState.showSnackbar(
+                    message = errorMsg,
+                    actionLabel = snackbarActionLabel
+                )
+            }
+        }
+    }
+
     // A surface container using the 'background' color from the theme
     Surface(
         color = MaterialTheme.colors.surface,
@@ -82,7 +104,7 @@ fun BodyContent(
                         Text(text = "LayoutsCodelab")
                     },
                     actions = {
-                        IconButton(onClick = { iconClick() }) {
+                        IconButton(onClick = iconClick) {
                             Icon(Icons.Filled.Favorite, contentDescription = null)
                         }
                     }
@@ -156,7 +178,7 @@ fun BodyContent(
                             linkTo(parent.start, parent.end)
                         }
                     ) {
-                        Text(text = "Log in")
+                        Text(text = stringResource(id = R.string.log_in))
                     }
 
                     Text(
@@ -169,13 +191,13 @@ fun BodyContent(
 
                     val barrier = createEndBarrier(button1, text)
                     Button(
-                        onClick = { signUp() },
+                        onClick = signUp,
                         modifier = Modifier.constrainAs(button2) {
                             top.linkTo(text.bottom, margin = 16.dp)
                             start.linkTo(barrier)
                         }
                     ) {
-                        Text(text = "Sign up")
+                        Text(text = stringResource(id = R.string.sign_up))
                     }
 
                     var searchText by remember { mutableStateOf("") }
@@ -223,6 +245,14 @@ fun BodyContent(
                     )
                 }
             }
+        }
+        
+        Box(modifier = Modifier.fillMaxSize()) {
+            ErrorSnackbar(
+                snackbarHostState = scaffoldState.snackbarHostState,
+                onDismiss = { scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }
@@ -312,6 +342,42 @@ fun Chip(modifier: Modifier = Modifier, text: String) {
     }
 }
 
+@Composable
+fun ErrorSnackbar(
+    snackbarHostState: SnackbarHostState,
+    modifier: Modifier,
+    onDismiss: () -> Unit = {}
+) {
+    SnackbarHost(
+        hostState = snackbarHostState,
+        snackbar = { data ->
+            Snackbar(
+                modifier = Modifier.padding(16.dp),
+                content = {
+                    Text(
+                        text = data.message,
+                        style = MaterialTheme.typography.body2
+                    )
+                },
+                action = {
+                    data.actionLabel?.let {
+                        TextButton(onClick = onDismiss) {
+                            Text(
+                                text = stringResource(id = R.string.dismiss),
+                                color = MaterialTheme.colors.primaryVariant
+                            )
+                        }
+
+                    }
+                }
+            )
+        },
+        modifier = modifier
+            .fillMaxWidth()
+            .wrapContentHeight(Alignment.Bottom)
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
@@ -322,7 +388,8 @@ fun DefaultPreview() {
             {},
             {},
             { _, _ -> },
-            {}
+            {},
+            rememberScaffoldState()
         )
     }
 }
