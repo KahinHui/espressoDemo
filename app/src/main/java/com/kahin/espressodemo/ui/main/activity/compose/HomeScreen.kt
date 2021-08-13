@@ -1,7 +1,9 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
+import android.content.Context
 import android.content.res.Configuration
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
@@ -17,6 +19,8 @@ import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +52,10 @@ fun HomeScreen(
     onNavigationEvent: MainActions,
     openDrawer: () -> Unit
 ) {
+    val context = LocalContext.current
+
     HomeContent(
+        context,
         openDrawer = openDrawer,
         logOut = {
             onNavigationEvent.logOut()
@@ -58,6 +65,7 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
+    context: Context,
     openDrawer: () -> Unit,
     logOut: () -> Unit
 ) {
@@ -83,6 +91,26 @@ fun HomeContent(
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomNavigation {
+                BottomNavigationItem(
+                    icon = { Icon(imageVector = Icons.Filled.Place, contentDescription = null)},
+                    selected = true,
+                    onClick = { Toast.makeText(context, "Place", Toast.LENGTH_SHORT).show() }
+                )
+                BottomNavigationItem(
+                    icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null)},
+                    selected = true,
+                    onClick = { Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show() }
+                )
+                BottomNavigationItem(
+                    icon = { Icon(imageVector = Icons.Filled.Face, contentDescription = null)},
+                    selected = true,
+                    onClick = { Toast.makeText(context, "Me", Toast.LENGTH_SHORT).show() }
+                )
+            }
+
         }
     ) { innerPadding ->
         MyOwnColumn(modifier = Modifier.padding(8.dp)) {
