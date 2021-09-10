@@ -59,7 +59,8 @@ fun HomeScreen(
         openDrawer = openDrawer,
         logOut = {
             onNavigationEvent.logOut()
-        }
+        },
+        toChat = onNavigationEvent.chat
     )
 }
 
@@ -67,7 +68,8 @@ fun HomeScreen(
 fun HomeContent(
     context: Context,
     openDrawer: () -> Unit,
-    logOut: () -> Unit
+    logOut: () -> Unit,
+    toChat: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -97,7 +99,8 @@ fun HomeContent(
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Place, contentDescription = null)},
                     selected = true,
-                    onClick = { Toast.makeText(context, "Place", Toast.LENGTH_SHORT).show() }
+//                    onClick = { Toast.makeText(context, "Place", Toast.LENGTH_SHORT).show() }
+                    onClick = toChat
                 )
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null)},

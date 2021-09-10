@@ -5,22 +5,30 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kahin.espressodemo.ui.main.activity.compose.conversation.LocalBackPressedDispatcher
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlinx.coroutines.launch
 
 class ComposeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Provide WindowInsets to our content. We don't want to consume them, so that
+        // they keep being pass down the view hierarchy (since we're using fragments).
         setContent {
-            ComposeApp()
+            ProvideWindowInsets(consumeWindowInsets = false) {
+                CompositionLocalProvider(
+                    LocalBackPressedDispatcher provides onBackPressedDispatcher,
+                ) {
+                    ComposeApp()
+                }
+            }
         }
     }
 }

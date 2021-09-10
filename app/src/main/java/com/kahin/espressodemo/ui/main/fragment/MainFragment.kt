@@ -32,10 +32,10 @@ class MainFragment : Fragment() {
         MyRecyclerViewAdapter(onItemClickListener = { viewId, _, _, data ->
             when (viewId) {
                 R.id.tv_title -> {
-                    binding.tvRvResult.text = String.format(context!!.getString(R.string.rv_result), data.count)
+                    binding.tvRvResult.text = String.format(requireContext().getString(R.string.rv_result), data.count)
                 }
                 R.id.tv_content -> {
-                    binding.tvRvResult.text = String.format(context!!.getString(R.string.rv_result), data.title)
+                    binding.tvRvResult.text = String.format(requireContext().getString(R.string.rv_result), data.title)
                 }
                 else -> {
                 }
@@ -61,7 +61,7 @@ class MainFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         binding.apply {
-            tvRvResult.text = String.format(context!!.getString(R.string.rv_result), "")
+            tvRvResult.text = String.format(requireContext().getString(R.string.rv_result), "")
             rv.adapter = dataAdapter
         }
 
@@ -94,10 +94,10 @@ class MainFragment : Fragment() {
             val tvContent = view.findViewById<TextView>(R.id.tv_content)
 
             tvTitle.setOnClickListener {
-                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), i)
+                binding.tvLvResult.text = String.format(requireContext().getString(R.string.lv_result), i)
             }
             tvContent.setOnClickListener {
-                binding.tvLvResult.text = String.format(context!!.getString(R.string.lv_result), "item $i")
+                binding.tvLvResult.text = String.format(requireContext().getString(R.string.lv_result), "item $i")
             }
         }
     }

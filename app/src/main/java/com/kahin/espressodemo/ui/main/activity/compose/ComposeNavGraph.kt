@@ -9,11 +9,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
 import kotlinx.coroutines.launch
 
 object MainDestinations {
     const val HOME_ROUTE = "home"
     const val LOG_IN_ROUTE = "logIn"
+    const val CONVERSATION = "conversation"
 }
 
 @Composable
@@ -36,6 +38,10 @@ fun ComposeNavGraph(
                 openDrawer = openDrawer
             )
         }
+        composable(MainDestinations.CONVERSATION) {
+            ConversationScreen(onNavigationEvent = actions)
+
+        }
     }
 }
 
@@ -52,6 +58,9 @@ class MainActions(navController: NavHostController) {
                 inclusive = true
             }
         }
+    }
+    val chat: () -> Unit = {
+        navController.navigate(MainDestinations.CONVERSATION)
     }
     val upPress: () -> Unit = {
         navController.navigateUp()
