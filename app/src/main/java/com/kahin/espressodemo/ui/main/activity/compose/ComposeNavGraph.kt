@@ -1,5 +1,7 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -10,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
+import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
 import kotlinx.coroutines.launch
 
 object MainDestinations {
@@ -20,11 +23,12 @@ object MainDestinations {
 
 @Composable
 fun ComposeNavGraph(
+    context: Context?,
     navController: NavHostController = rememberNavController(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     startDestination: String = MainDestinations.LOG_IN_ROUTE
 ) {
-    val actions = remember(navController) { MainActions(navController) }
+    val actions = remember(navController) { MainActions(context, navController) }
     val coroutineScope = rememberCoroutineScope()
     val openDrawer: () -> Unit = { coroutineScope.launch { scaffoldState.drawerState.open() }}
 
@@ -39,7 +43,7 @@ fun ComposeNavGraph(
             )
         }
         composable(MainDestinations.CONVERSATION) {
-            ConversationScreen(onNavigationEvent = actions)
+            ConversationScreen(/*onNavigationEvent = actions*/)
 
         }
     }
@@ -48,7 +52,7 @@ fun ComposeNavGraph(
 /**
  * Models the navigation actions in the app.
  */
-class MainActions(navController: NavHostController) {
+class MainActions(context: Context?, navController: NavHostController) {
     val toHome: () -> Unit = {
         navController.navigate(MainDestinations.HOME_ROUTE)
     }
@@ -61,6 +65,7 @@ class MainActions(navController: NavHostController) {
     }
     val chat: () -> Unit = {
         navController.navigate(MainDestinations.CONVERSATION)
+//        context?.startActivity(Intent(context, FragmentActivity::class.java))
     }
     val upPress: () -> Unit = {
         navController.navigateUp()

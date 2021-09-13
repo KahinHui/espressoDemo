@@ -3,6 +3,7 @@ package com.kahin.espressodemo.ui.main.fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.kahin.espressodemo.R
+import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationFragment
 
 class FragmentActivity : AppCompatActivity() {
 
@@ -12,6 +13,7 @@ class FragmentActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.container, MainFragment.newInstance())
+//                    .replace(R.id.container, ConversationFragment.newInstance())
                     .commitNow()
         }
     }

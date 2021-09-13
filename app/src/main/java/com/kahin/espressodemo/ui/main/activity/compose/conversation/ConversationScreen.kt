@@ -42,7 +42,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ConversationScreen(
-    onNavigationEvent: MainActions,
+//    onNavigationEvent: MainActions,
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
 

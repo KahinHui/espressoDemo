@@ -369,7 +369,7 @@ fun Preview() {
 //    Greeting("Compose")
 //    PhotographerCard()
         HomeScreen(
-            MainActions(NavHostController(LocalContext.current))
+            MainActions(context = null, NavHostController(LocalContext.current))
         ) {}
     }
 }

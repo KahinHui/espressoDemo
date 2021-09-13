@@ -1,5 +1,6 @@
 package com.kahin.espressodemo.ui.main.activity.compose
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -19,6 +21,10 @@ class ComposeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Turn off the decor fitting system windows, which allows us to handle insets,
+        // including IME animations
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         // Provide WindowInsets to our content. We don't want to consume them, so that
         // they keep being pass down the view hierarchy (since we're using fragments).
         setContent {
@@ -26,7 +32,7 @@ class ComposeActivity : AppCompatActivity() {
                 CompositionLocalProvider(
                     LocalBackPressedDispatcher provides onBackPressedDispatcher,
                 ) {
-                    ComposeApp()
+                    ComposeApp(this)
                 }
             }
         }
@@ -34,7 +40,7 @@ class ComposeActivity : AppCompatActivity() {
 }
 
 @Composable
-fun ComposeApp() {
+fun ComposeApp(context: Context?) {
     EspressoDemoTheme {
         val systemUiController = rememberSystemUiController()
         SideEffect {
@@ -71,6 +77,7 @@ fun ComposeApp() {
             }
         ) {
             ComposeNavGraph(
+                context = context,
                 navController = navController,
                 scaffoldState = scaffoldState
             )
