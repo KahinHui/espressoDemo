@@ -59,7 +59,7 @@ fun ChatAppBar(
 
 @Preview
 @Composable
-fun JetchatAppBarPreview() {
+fun ChatAppBarPreview() {
     EspressoDemoTheme {
         ChatAppBar(title = { Text("Preview!") })
     }
@@ -67,7 +67,7 @@ fun JetchatAppBarPreview() {
 
 @Preview
 @Composable
-fun JetchatAppBarPreviewDark() {
+fun ChatAppBarPreviewDark() {
     EspressoDemoTheme(darkTheme = true) {
         ChatAppBar(title = { Text("Preview!") })
     }

@@ -12,6 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
+import com.kahin.espressodemo.ui.main.activity.compose.profile.ProfileScreen
+import com.kahin.espressodemo.ui.main.activity.compose.profile.meProfile
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
 import kotlinx.coroutines.launch
 
@@ -19,6 +21,7 @@ object MainDestinations {
     const val HOME_ROUTE = "home"
     const val LOG_IN_ROUTE = "logIn"
     const val CONVERSATION = "conversation"
+    const val PROFILE = "profile"
 }
 
 @Composable
@@ -43,8 +46,10 @@ fun ComposeNavGraph(
             )
         }
         composable(MainDestinations.CONVERSATION) {
-            ConversationScreen(/*onNavigationEvent = actions*/)
-
+            ConversationScreen(onNavigationEvent = actions)
+        }
+        composable("${MainDestinations.PROFILE}/{userId}") { backStackEntry ->
+            ProfileScreen(backStackEntry.arguments?.let { it.getString("userId") } ?: meProfile.userId)
         }
     }
 }
@@ -66,6 +71,9 @@ class MainActions(context: Context?, navController: NavHostController) {
     val chat: () -> Unit = {
         navController.navigate(MainDestinations.CONVERSATION)
 //        context?.startActivity(Intent(context, FragmentActivity::class.java))
+    }
+    val profile: (String) -> Unit = { userId ->
+        navController.navigate("${MainDestinations.PROFILE}/$userId")
     }
     val upPress: () -> Unit = {
         navController.navigateUp()

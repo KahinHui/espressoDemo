@@ -7,9 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.ComposeView
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ExperimentalAnimatedInsets
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.ViewWindowInsetObserver
+import com.kahin.espressodemo.ui.main.activity.compose.MainActions
 
 /**
  * A simple [Fragment] subclass.
@@ -46,7 +48,7 @@ class ConversationFragment : Fragment() {
                 LocalBackPressedDispatcher provides requireActivity().onBackPressedDispatcher,
                 LocalWindowInsets provides windowInsets
             ) {
-                ConversationScreen()
+                ConversationScreen(MainActions(context, rememberNavController()))
             }
         }
     }

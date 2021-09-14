@@ -44,6 +44,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import com.kahin.espressodemo.R
+import com.kahin.espressodemo.ui.main.activity.compose.profile.meProfile
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
 import kotlinx.coroutines.launch
 
@@ -60,7 +61,8 @@ fun HomeScreen(
         logOut = {
             onNavigationEvent.logOut()
         },
-        toChat = onNavigationEvent.chat
+        toChat = onNavigationEvent.chat,
+        toProfile = { userId -> onNavigationEvent.profile(userId) }
     )
 }
 
@@ -70,6 +72,7 @@ fun HomeContent(
     openDrawer: () -> Unit,
     logOut: () -> Unit,
     toChat: () -> Unit,
+    toProfile: (String) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -110,10 +113,10 @@ fun HomeContent(
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Face, contentDescription = null)},
                     selected = true,
-                    onClick = { Toast.makeText(context, "Me", Toast.LENGTH_SHORT).show() }
+//                    onClick = { Toast.makeText(context, "Me", Toast.LENGTH_SHORT).show() }
+                    onClick = { toProfile(meProfile.userId) }
                 )
             }
-
         }
     ) { innerPadding ->
         MyOwnColumn(modifier = Modifier.padding(8.dp)) {
