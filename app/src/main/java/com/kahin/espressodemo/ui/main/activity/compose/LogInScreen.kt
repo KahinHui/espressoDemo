@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.insets.statusBarsPadding
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.ui.main.activity.compose.state.UiState
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
@@ -99,7 +100,8 @@ fun BodyContent(
         // A surface container using the 'background' color from the theme
         Surface(
             color = MaterialTheme.colors.surface,
-            elevation = 2.dp
+            elevation = 2.dp,
+            modifier = Modifier.statusBarsPadding()
         ) {
             Scaffold(
                 topBar = {

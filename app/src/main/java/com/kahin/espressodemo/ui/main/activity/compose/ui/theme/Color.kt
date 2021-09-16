@@ -12,6 +12,8 @@ val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 val White200 = Color(0xFFF5F5F5)
+val crane_caption = Color.DarkGray
+val crane_divider_color = Color.LightGray
 
 /**
  * Calculates the color of an elevated `surface` in dark mode. Returns `surface` in light mode.

@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
+import com.kahin.espressodemo.ui.main.activity.compose.crane.CraneHome
 import com.kahin.espressodemo.ui.main.activity.compose.profile.ProfileScreen
 import com.kahin.espressodemo.ui.main.activity.compose.profile.meProfile
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
@@ -22,6 +23,7 @@ object MainDestinations {
     const val LOG_IN_ROUTE = "logIn"
     const val CONVERSATION = "conversation"
     const val PROFILE = "profile"
+    const val PLACE = "place"
 }
 
 @Composable
@@ -51,6 +53,9 @@ fun ComposeNavGraph(
         composable("${MainDestinations.PROFILE}/{userId}") { backStackEntry ->
             ProfileScreen(backStackEntry.arguments?.let { it.getString("userId") } ?: meProfile.userId)
         }
+        composable(MainDestinations.PLACE) {
+            CraneHome(onExploreItemClicked = {}, onDateSelectionClicked = {})
+        }
     }
 }
 
@@ -74,6 +79,9 @@ class MainActions(context: Context?, navController: NavHostController) {
     }
     val profile: (String) -> Unit = { userId ->
         navController.navigate("${MainDestinations.PROFILE}/$userId")
+    }
+    val place: () -> Unit = {
+        navController.navigate(MainDestinations.PLACE)
     }
     val upPress: () -> Unit = {
         navController.navigateUp()

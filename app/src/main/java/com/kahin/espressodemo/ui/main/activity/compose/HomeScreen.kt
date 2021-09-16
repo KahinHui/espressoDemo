@@ -17,10 +17,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +40,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.ui.main.activity.compose.profile.meProfile
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.EspressoDemoTheme
@@ -62,7 +61,8 @@ fun HomeScreen(
             onNavigationEvent.logOut()
         },
         toChat = onNavigationEvent.chat,
-        toProfile = { userId -> onNavigationEvent.profile(userId) }
+        toProfile = { userId -> onNavigationEvent.profile(userId) },
+        toPlace = onNavigationEvent.place
     )
 }
 
@@ -72,7 +72,8 @@ fun HomeContent(
     openDrawer: () -> Unit,
     logOut: () -> Unit,
     toChat: () -> Unit,
-    toProfile: (String) -> Unit
+    toProfile: (String) -> Unit,
+    toPlace: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -98,12 +99,19 @@ fun HomeContent(
             )
         },
         bottomBar = {
-            BottomNavigation {
+            BottomNavigation(
+                modifier = Modifier.height(50.dp)
+            ) {
+                BottomNavigationItem(
+                    icon = { Icon(imageVector = Icons.Filled.Chat, contentDescription = null)},
+                    selected = true,
+                    onClick = toChat
+                )
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Place, contentDescription = null)},
                     selected = true,
 //                    onClick = { Toast.makeText(context, "Place", Toast.LENGTH_SHORT).show() }
-                    onClick = toChat
+                    onClick = toPlace
                 )
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null)},
@@ -117,7 +125,10 @@ fun HomeContent(
                     onClick = { toProfile(meProfile.userId) }
                 )
             }
-        }
+        },
+        modifier = Modifier
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ) { innerPadding ->
         MyOwnColumn(modifier = Modifier.padding(8.dp)) {
             Greeting("Compose")
@@ -272,7 +283,7 @@ fun LazyList() {
             state = scrollState,
             modifier = Modifier
                 .layoutId("lazyList")
-                .height(290.dp)
+                .height(230.dp)
         ) {
             items(listSize) {
                 PhotographerCard(it)
