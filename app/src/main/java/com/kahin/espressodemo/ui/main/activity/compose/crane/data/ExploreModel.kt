@@ -1,4 +1,4 @@
-package com.kahin.espressodemo.ui.main.activity.compose.crane
+package com.kahin.espressodemo.ui.main.activity.compose.crane.data
 
 import androidx.compose.runtime.Immutable
 

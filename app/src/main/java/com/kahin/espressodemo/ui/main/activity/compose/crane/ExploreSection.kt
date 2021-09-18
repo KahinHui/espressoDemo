@@ -23,6 +23,8 @@ import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsHeight
 import com.kahin.espressodemo.R
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.City
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.ExploreModel
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.BottomSheetShape
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.crane_caption
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.crane_divider_color
@@ -38,7 +40,7 @@ fun ExploreSection(
 ) {
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = Color.White,
+        color = MaterialTheme.colors.background,
         shape = BottomSheetShape
     ) {
         Column(modifier = Modifier.padding(start = 24.dp, top = 20.dp, end = 24.dp)) {
@@ -106,6 +108,11 @@ private fun ExploreItem(
         }
         Spacer(modifier = Modifier.width(24.dp))
         Column {
+            Text(
+                text = item.city.nameToDisplay,
+                style = MaterialTheme.typography.h6,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = item.description,
                 style = MaterialTheme.typography.caption.copy(color = crane_caption)

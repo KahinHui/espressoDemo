@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.kahin.espressodemo.ui.main.activity.compose.calendar.launchCalendarActivity
 import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
 import com.kahin.espressodemo.ui.main.activity.compose.crane.CraneHome
 import com.kahin.espressodemo.ui.main.activity.compose.profile.ProfileScreen
@@ -54,7 +55,14 @@ fun ComposeNavGraph(
             ProfileScreen(backStackEntry.arguments?.let { it.getString("userId") } ?: meProfile.userId)
         }
         composable(MainDestinations.PLACE) {
-            CraneHome(onExploreItemClicked = {}, onDateSelectionClicked = {})
+            CraneHome(
+                onExploreItemClicked = {},
+                onDateSelectionClicked = {
+                    context?.let {
+                        launchCalendarActivity(context)
+                    }
+                }
+            )
         }
     }
 }

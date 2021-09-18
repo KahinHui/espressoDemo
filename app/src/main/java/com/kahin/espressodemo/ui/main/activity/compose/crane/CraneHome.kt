@@ -7,6 +7,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
+import com.kahin.espressodemo.ui.main.activity.compose.calendar.data.DatesLocalDataSource
+import com.kahin.espressodemo.ui.main.activity.compose.calendar.data.DatesRepository
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.City
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.DestinationsLocalDataSource
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.DestinationsRepository
+import com.kahin.espressodemo.ui.main.activity.compose.crane.data.ExploreModel
 
 @Composable
 fun CraneHome(
@@ -24,7 +30,10 @@ fun CraneHome(
             onExploreItemClicked = onExploreItemClicked,
             onDateSelectionClicked = onDateSelectionClicked,
             openDrawer = { /*TODO*/ },
-            viewModel = MainViewModel()
+            viewModel = MainViewModel(
+                DestinationsRepository(DestinationsLocalDataSource()),
+                DatesRepository(DatesLocalDataSource())
+            )
         )
     }
 }
@@ -36,10 +45,10 @@ fun CraneHomeContent(
     onDateSelectionClicked: () -> Unit,
     openDrawer: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MainViewModel// = viewModel()
+    viewModel: MainViewModel
 ) {
 
-    val onPeopleChanged: (Int) -> Unit = { /*viewModel.updatePeople(it)*/ }
+    val onPeopleChanged: (Int) -> Unit = { viewModel.updatePeople(it) }
 
     BackdropScaffold(
         modifier = modifier,
@@ -65,7 +74,7 @@ fun CraneHomeContent(
         frontLayerContent = {
             ExploreSection(
                 title = "Explore Flights by Destination",
-                exploreList = exploreList,
+                exploreList = viewModel.restaurants,
                 onItemClicked = {}
             )
         },
@@ -82,7 +91,7 @@ private fun SearchContent(
 ) {
     // Reading datesSelected State from here instead of passing the String from the ViewModel
     // to cause a recomposition when the dates change.
-    val datesSelected = viewModel.datesSelected
+    val datesSelected = viewModel.datesSelected.toString()
 
     EatSearchContent(
         datesSelected = datesSelected,
@@ -98,51 +107,4 @@ data class EatSearchContentUpdates(
     val onPeopleChanged: (Int) -> Unit,
     val onDateSelectionClicked: () -> Unit,
     val onExploreItemClicked: OnExploreItemClicked
-)
-
-private val exploreList = listOf(
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas"),
-    ExploreModel(
-        city = City("sz", "", "", ""),
-        description = "ddd",
-        imageUrl = ".sjdas")
 )

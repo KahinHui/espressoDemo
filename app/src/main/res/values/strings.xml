@@ -59,4 +59,8 @@
     <string name="timezone">Timezone</string>
     <string name="twitter">Twitter</string>
     <string name="more_options">More options</string>
+    <string name="click_label_select">select</string>
+    <string name="state_descr_selected">Selected</string>
+    <string name="state_descr_not_selected">Not selected</string>
+    <string name="cd_back">Back</string>
 </resources>

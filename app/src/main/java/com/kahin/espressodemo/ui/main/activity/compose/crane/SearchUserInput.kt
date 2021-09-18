@@ -18,8 +18,6 @@ import com.kahin.espressodemo.ui.main.activity.compose.crane.PeopleUserInputAnim
 import com.kahin.espressodemo.ui.main.activity.compose.crane.PeopleUserInputAnimationState.Valid
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.captionTextStyle
 
-const val MAX_PEOPLE = 4
-
 enum class PeopleUserInputAnimationState { Valid, Invalid }
 
 class PeopleUserInputState {
