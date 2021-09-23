@@ -1,18 +1,21 @@
 package com.kahin.espressodemo.ui.main.activity.compose.crane
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.statusBarsPadding
 import com.kahin.espressodemo.ui.main.activity.compose.calendar.data.DatesLocalDataSource
 import com.kahin.espressodemo.ui.main.activity.compose.calendar.data.DatesRepository
-import com.kahin.espressodemo.ui.main.activity.compose.crane.data.City
 import com.kahin.espressodemo.ui.main.activity.compose.crane.data.DestinationsLocalDataSource
 import com.kahin.espressodemo.ui.main.activity.compose.crane.data.DestinationsRepository
-import com.kahin.espressodemo.ui.main.activity.compose.crane.data.ExploreModel
 
 @Composable
 fun CraneHome(
@@ -21,20 +24,41 @@ fun CraneHome(
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberScaffoldState()
+    val transitionState = remember { MutableTransitionState(SplashState.Shown) }
+    val transition = updateTransition(targetState = transitionState, label = "splashTransition")
+    val splashAlpha by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 100) }, label = "splashAlpha"
+    ) {
+        if (it.targetState == SplashState.Shown) 1f else 0f
+    }
+    val contentAlpha by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 300) },
+        label = "splashAlpha"
+    ) {
+        if (it.targetState == SplashState.Shown) 0f else 1f
+    }
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier.statusBarsPadding(),
         drawerContent = {}
     ) {
-        CraneHomeContent(
-            onExploreItemClicked = onExploreItemClicked,
-            onDateSelectionClicked = onDateSelectionClicked,
-            openDrawer = { /*TODO*/ },
-            viewModel = MainViewModel(
-                DestinationsRepository(DestinationsLocalDataSource()),
-                DatesRepository(DatesLocalDataSource())
+        Box {
+            LandingScreen(
+                modifier = Modifier.alpha(splashAlpha)
+            ) {
+                transitionState.targetState = SplashState.Completed
+            }
+            CraneHomeContent(
+                modifier = Modifier.alpha(contentAlpha),
+                onExploreItemClicked = onExploreItemClicked,
+                onDateSelectionClicked = onDateSelectionClicked,
+                openDrawer = { /*TODO*/ },
+                viewModel = MainViewModel(
+                    DestinationsRepository(DestinationsLocalDataSource()),
+                    DatesRepository(DatesLocalDataSource())
+                )
             )
-        )
+        }
     }
 }
 
@@ -79,6 +103,7 @@ fun CraneHomeContent(
             )
         },
         frontLayerBackgroundColor = Color.Transparent,
+        backLayerBackgroundColor = Color.Transparent
     )
 }
 
@@ -108,3 +133,5 @@ data class EatSearchContentUpdates(
     val onDateSelectionClicked: () -> Unit,
     val onExploreItemClicked: OnExploreItemClicked
 )
+
+enum class SplashState { Shown, Completed }
