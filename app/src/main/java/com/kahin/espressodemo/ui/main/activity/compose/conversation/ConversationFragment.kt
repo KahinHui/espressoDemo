@@ -48,7 +48,7 @@ class ConversationFragment : Fragment() {
                 LocalBackPressedDispatcher provides requireActivity().onBackPressedDispatcher,
                 LocalWindowInsets provides windowInsets
             ) {
-                ConversationScreen(MainActions(context, rememberNavController()))
+                ConversationScreen(MainActions(context, rememberNavController()), openDrawer = {})
             }
         }
     }

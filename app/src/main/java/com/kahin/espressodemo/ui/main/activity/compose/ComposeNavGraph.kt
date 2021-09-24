@@ -49,7 +49,7 @@ fun ComposeNavGraph(
             )
         }
         composable(MainDestinations.CONVERSATION) {
-            ConversationScreen(onNavigationEvent = actions)
+            ConversationScreen(onNavigationEvent = actions, openDrawer = openDrawer)
         }
         composable("${MainDestinations.PROFILE}/{userId}") { backStackEntry ->
             ProfileScreen(backStackEntry.arguments?.let { it.getString("userId") } ?: meProfile.userId)
@@ -61,7 +61,8 @@ fun ComposeNavGraph(
                     context?.let {
                         launchCalendarActivity(context)
                     }
-                }
+                },
+                openDrawer = openDrawer
             )
         }
     }

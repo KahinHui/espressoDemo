@@ -75,8 +75,6 @@ fun HomeContent(
     toProfile: (String) -> Unit,
     toPlace: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -84,7 +82,7 @@ fun HomeContent(
                     Text(text = "LayoutsCodelab")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { coroutineScope.launch { openDrawer() } }) {
+                    IconButton(onClick = openDrawer) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_launcher_background),
                             contentDescription = stringResource(id = R.string.activity)

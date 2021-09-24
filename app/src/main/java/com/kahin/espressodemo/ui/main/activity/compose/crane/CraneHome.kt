@@ -4,9 +4,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -21,6 +19,7 @@ import com.kahin.espressodemo.ui.main.activity.compose.crane.data.DestinationsRe
 fun CraneHome(
     onExploreItemClicked: OnExploreItemClicked,
     onDateSelectionClicked: () -> Unit,
+    openDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -52,13 +51,33 @@ fun CraneHome(
                 modifier = Modifier.alpha(contentAlpha),
                 onExploreItemClicked = onExploreItemClicked,
                 onDateSelectionClicked = onDateSelectionClicked,
-                openDrawer = { /*TODO*/ },
+                openDrawer = openDrawer,
                 viewModel = MainViewModel(
                     DestinationsRepository(DestinationsLocalDataSource()),
                     DatesRepository(DatesLocalDataSource())
                 )
             )
         }
+    }
+}
+
+@Composable
+private fun HomeTabBar(
+    openDrawer: () -> Unit,
+    tabSelected: CraneScreen,
+    onTabSelected: (CraneScreen) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    CraneTabBar(
+        modifier,
+        onMenuClicked = openDrawer
+    ) { tabBarModifier ->
+        CraneTabs(
+            tabBarModifier,
+            CraneScreen.values().map { it.name },
+            tabSelected = tabSelected,
+            onTabSelected = { newTab -> onTabSelected(CraneScreen.values()[newTab.ordinal]) }
+        )
     }
 }
 
@@ -73,12 +92,18 @@ fun CraneHomeContent(
 ) {
 
     val onPeopleChanged: (Int) -> Unit = { viewModel.updatePeople(it) }
+    var tabSelected by remember { mutableStateOf(CraneScreen.Eat) }
 
     BackdropScaffold(
         modifier = modifier,
         scaffoldState = rememberBackdropScaffoldState(initialValue = BackdropValue.Revealed),
         frontLayerScrimColor = Color.Unspecified,
-        appBar = { /*TODO*/ },
+        appBar = {
+            HomeTabBar(
+                openDrawer = openDrawer,
+                tabSelected = tabSelected,
+                onTabSelected = { tabSelected = it})
+        },
         backLayerContent = {
             Text(
                 text = "gkjshdfgjhdskl",

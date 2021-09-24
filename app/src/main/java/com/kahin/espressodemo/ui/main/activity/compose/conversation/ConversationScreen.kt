@@ -43,18 +43,21 @@ import kotlinx.coroutines.launch
 @Composable
 fun ConversationScreen(
     onNavigationEvent: MainActions,
-    scaffoldState: ScaffoldState = rememberScaffoldState()
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    openDrawer: () -> Unit
 ) {
 
-    ConversationContent(uiState = ConversationUiState(
-        initialMessages = initialMessages,
-        channelName = "#composers",
-        channelMembers = 42
-    ),
+    ConversationContent(
+        uiState = ConversationUiState(
+            initialMessages = initialMessages,
+            channelName = "#composers",
+            channelMembers = 42
+        ),
         navigateToProfile = { useId ->
             // Click callback
             onNavigationEvent.profile(useId)
-        }
+        },
+        onNavIconPressed = openDrawer
     )
 }
 
