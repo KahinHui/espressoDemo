@@ -7,6 +7,7 @@ class DestinationsRepository @Inject constructor(
 ) {
     val destinations: List<ExploreModel> = destinationsLocalDataSource.craneRestaurants
     val restaurants: List<ExploreModel> = destinationsLocalDataSource.craneRestaurants
+    val hotels: List<ExploreModel> = destinationsLocalDataSource.craneHotels
 
     fun getDestination(cityName: String): ExploreModel? {
         return destinationsLocalDataSource.craneRestaurants.firstOrNull {

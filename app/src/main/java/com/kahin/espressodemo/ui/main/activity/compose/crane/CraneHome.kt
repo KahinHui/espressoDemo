@@ -110,6 +110,7 @@ fun CraneHomeContent(
                 modifier = Modifier.padding(20.dp)
             )
             SearchContent(
+                tabSelected,
                 viewModel = viewModel,
                 onPeopleChanged = onPeopleChanged,
                 onDateSelectionClicked = onDateSelectionClicked,
@@ -121,11 +122,18 @@ fun CraneHomeContent(
             )
         },
         frontLayerContent = {
-            ExploreSection(
-                title = "Explore Flights by Destination",
-                exploreList = viewModel.restaurants,
-                onItemClicked = {}
-            )
+            when(tabSelected) {
+                CraneScreen.Eat -> ExploreSection(
+                    title = "Explore Restaurants by Destination",
+                    exploreList = viewModel.restaurants,
+                    onItemClicked = {}
+                )
+                CraneScreen.Sleep -> ExploreSection(
+                    title = "Explore Properties by Destination",
+                    exploreList = viewModel.hotels,
+                    onItemClicked = {}
+                )
+            }
         },
         frontLayerBackgroundColor = Color.Transparent,
         backLayerBackgroundColor = Color.Transparent
@@ -134,6 +142,7 @@ fun CraneHomeContent(
 
 @Composable
 private fun SearchContent(
+    tabSelected: CraneScreen,
     viewModel: MainViewModel,
     onPeopleChanged: (Int) -> Unit,
     onDateSelectionClicked: () -> Unit,
@@ -143,17 +152,33 @@ private fun SearchContent(
     // to cause a recomposition when the dates change.
     val datesSelected = viewModel.datesSelected.toString()
 
-    EatSearchContent(
-        datesSelected = datesSelected,
-        eatUpdates = EatSearchContentUpdates(
-            onPeopleChanged,
-            onDateSelectionClicked,
-            onExploreItemClicked
+    when(tabSelected) {
+        CraneScreen.Eat -> EatSearchContent(
+            datesSelected = datesSelected,
+            eatUpdates = EatSearchContentUpdates(
+                onPeopleChanged,
+                onDateSelectionClicked,
+                onExploreItemClicked
+            )
         )
-    )
+        CraneScreen.Sleep -> SleepSearchContent(
+            datesSelected = datesSelected,
+            sleepUpdates = SleepSearchContentUpdates(
+                onPeopleChanged,
+                onDateSelectionClicked,
+                onExploreItemClicked
+            )
+        )
+    }
 }
 
 data class EatSearchContentUpdates(
+    val onPeopleChanged: (Int) -> Unit,
+    val onDateSelectionClicked: () -> Unit,
+    val onExploreItemClicked: OnExploreItemClicked
+)
+
+data class SleepSearchContentUpdates(
     val onPeopleChanged: (Int) -> Unit,
     val onDateSelectionClicked: () -> Unit,
     val onExploreItemClicked: OnExploreItemClicked

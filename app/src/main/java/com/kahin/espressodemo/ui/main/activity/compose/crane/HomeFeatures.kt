@@ -12,13 +12,24 @@ import com.kahin.espressodemo.R
 @Composable
 fun EatSearchContent(datesSelected: String, eatUpdates: EatSearchContentUpdates) {
     CraneSearch {
-        PeopleUserInput(onPeopleChanged = eatUpdates.onPeopleChanged )
+        PeopleUserInput(onPeopleChanged = eatUpdates.onPeopleChanged)
         Spacer(modifier = Modifier.height(8.dp))
         DatesUserInput(datesSelected, onDateSelectionClicked = eatUpdates.onDateSelectionClicked)
         Spacer(modifier = Modifier.height(8.dp))
         SimpleUserInput(caption = "Select Time", vectorImageId = R.drawable.ic_time)
         Spacer(modifier = Modifier.height(8.dp))
         SimpleUserInput(caption = "Select Location", vectorImageId = R.drawable.ic_restaurant)
+    }
+}
+
+@Composable
+fun SleepSearchContent(datesSelected: String, sleepUpdates: SleepSearchContentUpdates) {
+    CraneSearch {
+        PeopleUserInput(onPeopleChanged = sleepUpdates.onPeopleChanged)
+        Spacer(modifier = Modifier.height(8.dp))
+        DatesUserInput(datesSelected, sleepUpdates.onDateSelectionClicked)
+        Spacer(modifier = Modifier.height(8.dp))
+        SimpleUserInput(caption = "Select Location", vectorImageId = R.drawable.ic_hotel)
     }
 }
 

@@ -24,6 +24,7 @@ class MainViewModel @Inject constructor(
 
     val restaurants: List<ExploreModel> = destinationsRepository.restaurants
     val datesSelected: DatesSelectedState = datesRepository.datesSelected
+    val hotels: List<ExploreModel> = destinationsRepository.hotels
 
     private val _suggestedDestinations = MutableLiveData<List<ExploreModel>>()
 //    val suggestedDestinations = LiveData<List<ExploreModel>>
