@@ -84,6 +84,41 @@ class DestinationsLocalDataSource @Inject constructor() {
             city = CORDOBA,
             description = "876 Available Properties",
             imageUrl = "https://images.unsplash.com/photo-1570214476695-19bd467e6f7a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = MALDIVAS,
+            description = "1286 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = ASPEN,
+            description = "2241 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = BALI,
+            description = "876 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1570213489059-0aac6626cade?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = BIGSUR,
+            description = "5610 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1561409037-c7be81613c1f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = NAPLES,
+            description = "1286 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1455587734955-081b22074882?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = DALLAS,
+            description = "2241 Available Properties",
+            imageUrl = "https://images.unsplash.com/46/sh3y2u5PSaKq8c4LxB3B_submission-photo-4.jpg?ixlib=rb-1.2.1&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
+        ),
+        ExploreModel(
+            city = CORDOBA,
+            description = "876 Available Properties",
+            imageUrl = "https://images.unsplash.com/photo-1570214476695-19bd467e6f7a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=$DEFAULT_IMAGE_WIDTH"
         )
     )
 

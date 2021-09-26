@@ -5,11 +5,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -19,12 +25,14 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsPadding
 import com.kahin.espressodemo.R
 import com.kahin.espressodemo.ui.main.activity.compose.crane.data.City
 import com.kahin.espressodemo.ui.main.activity.compose.crane.data.ExploreModel
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.BottomSheetShape
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.crane_caption
 import com.kahin.espressodemo.ui.main.activity.compose.ui.theme.crane_divider_color
+import kotlinx.coroutines.launch
 
 typealias OnExploreItemClicked = (ExploreModel) -> Unit
 
@@ -46,21 +54,59 @@ fun ExploreSection(
                 style = MaterialTheme.typography.caption.copy(crane_caption)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(exploreList) { exploreItem ->
-                    Column(Modifier.fillMaxWidth()) {
-                        ExploreItem(
-                            item = exploreItem,
-                            onItemClicked = onItemClicked,
-                            modifier = Modifier.fillParentMaxWidth()
-                        )
-                        Divider(color = crane_divider_color)
+            Box(modifier = Modifier.weight(1f)) {
+                val listState = rememberLazyListState()
+                ExploreList(exploreList, onItemClicked, listState = listState)
+
+                // Show the button if the first visible item is past
+                // the first item. We use a remembered derived state to
+                // minimize unnecessary compositions
+                val showButton = remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemIndex > 0
                     }
                 }
-                item {
-                    Spacer(modifier = Modifier.navigationBarsHeight())
+                if (showButton.value) {
+                    val coroutineScope = rememberCoroutineScope()
+                    FloatingActionButton(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .align(BottomEnd)
+                            .navigationBarsPadding()
+                            .padding(bottom = 8.dp),
+                        onClick = {
+                            coroutineScope.launch {
+                                listState.scrollToItem(0)
+                            }
+                        }
+                    ) {
+                        Text(text = "Up!")
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ExploreList(
+    exploreList: List<ExploreModel>,
+    onItemClicked: OnExploreItemClicked,
+    listState: LazyListState
+) {
+    LazyColumn(state = listState) {
+        items(exploreList) { exploreItem ->
+            Column(Modifier.fillMaxWidth()) {
+                ExploreItem(
+                    item = exploreItem,
+                    onItemClicked = onItemClicked,
+                    modifier = Modifier.fillParentMaxWidth()
+                )
+                Divider(color = crane_divider_color)
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.navigationBarsHeight())
         }
     }
 }

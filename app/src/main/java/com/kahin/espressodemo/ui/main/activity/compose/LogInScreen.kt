@@ -49,6 +49,8 @@ fun LogInScreen(
     val viewModel: LogInViewModel = viewModel()
     val state: UiState<User> by viewModel.state.observeAsState(UiState(data = User("", "")))
 
+//    val uiState by produceState(initialValue = UiState(loading = true, data = null)) {}
+
 //    viewModel.logOut()
 
     BodyContent(
