@@ -41,7 +41,7 @@ fun PodcastCategory(
 
     val viewState by viewModel.state.collectAsState()
 
-    Column() {
+    Column(modifier = modifier) {
         CategoryPodcasts(topPodcasts = viewState.topPodcasts, viewModel = viewModel)
     }
 }
@@ -58,8 +58,8 @@ private fun CategoryPodcasts(
         item {
             CategoryPodcastRow(
                 podcasts = topPodcasts,
-                onToggleFollowClicked = {},
-                modifier = Modifier.fillMaxWidth()
+                onToggleFollowClicked = viewModel::onTogglePodcastFollowed,
+                modifier = Modifier.fillParentMaxWidth()
             )
         }
     }
@@ -80,8 +80,9 @@ private fun CategoryPodcastRow(
             PodcastRowItem(
                 podcastTitle = podcast.title,
                 isFollowed = isFollowed,
-                onToggleFollowClicked = { onToggleFollowClicked(podcast.uri) },
-                modifier = Modifier.width(128.dp)
+                onToggleFollowClicked = { onToggleFollowClicked(podcast.title) },
+                modifier = Modifier.width(128.dp),
+                podcastImageUrl = podcast.imageUrl
             )
 
             if (index < lastIndexed) Spacer(modifier = Modifier.width(24.dp))
@@ -119,24 +120,24 @@ private fun PodcastRowItem(
                         .clip(MaterialTheme.shapes.medium)
                 )
             }
+
+            ToggleFollowPodcastIconButton(
+                isFollowed = isFollowed,
+                onClick = onToggleFollowClicked,
+                modifier = Modifier.align(alignment = Alignment.BottomEnd)
+            )
         }
 
-        ToggleFollowPodcastIconButton(
-            isFollowed = isFollowed,
-            onClick = onToggleFollowClicked,
-            modifier = Modifier.align(alignment = Alignment.End)
+        Text(
+            text = podcastTitle,
+            style = MaterialTheme.typography.body2,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth()
         )
     }
-
-    Text(
-        text = podcastTitle,
-        style = MaterialTheme.typography.body2,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth()
-    )
 }
 
 @Composable

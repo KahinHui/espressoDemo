@@ -62,7 +62,8 @@ fun HomeScreen(
         },
         toChat = onNavigationEvent.chat,
         toProfile = { userId -> onNavigationEvent.profile(userId) },
-        toPlace = onNavigationEvent.place
+        toPlace = onNavigationEvent.place,
+        toPodcast = onNavigationEvent.podcast
     )
 }
 
@@ -73,7 +74,8 @@ fun HomeContent(
     logOut: () -> Unit,
     toChat: () -> Unit,
     toProfile: (String) -> Unit,
-    toPlace: () -> Unit
+    toPlace: () -> Unit,
+    toPodcast: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -114,7 +116,8 @@ fun HomeContent(
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null)},
                     selected = true,
-                    onClick = { Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show() }
+//                    onClick = { Toast.makeText(context, "Home", Toast.LENGTH_SHORT).show() }
+                    onClick = toPodcast
                 )
                 BottomNavigationItem(
                     icon = { Icon(imageVector = Icons.Filled.Face, contentDescription = null)},

@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kahin.espressodemo.ui.main.activity.compose.calendar.launchCalendarActivity
 import com.kahin.espressodemo.ui.main.activity.compose.conversation.ConversationScreen
 import com.kahin.espressodemo.ui.main.activity.compose.crane.CraneHome
+import com.kahin.espressodemo.ui.main.activity.compose.podcast.PodcastCategory
 import com.kahin.espressodemo.ui.main.activity.compose.profile.ProfileScreen
 import com.kahin.espressodemo.ui.main.activity.compose.profile.meProfile
 import com.kahin.espressodemo.ui.main.fragment.FragmentActivity
@@ -25,6 +26,7 @@ object MainDestinations {
     const val CONVERSATION = "conversation"
     const val PROFILE = "profile"
     const val PLACE = "place"
+    const val PODCAST = "podcast"
 }
 
 @Composable
@@ -65,6 +67,9 @@ fun ComposeNavGraph(
                 openDrawer = openDrawer
             )
         }
+        composable(MainDestinations.PODCAST) {
+            PodcastCategory(categoryId = 0)
+        }
     }
 }
 
@@ -91,6 +96,9 @@ class MainActions(context: Context?, navController: NavHostController) {
     }
     val place: () -> Unit = {
         navController.navigate(MainDestinations.PLACE)
+    }
+    val podcast: () -> Unit = {
+        navController.navigate(MainDestinations.PODCAST)
     }
     val upPress: () -> Unit = {
         navController.navigateUp()
